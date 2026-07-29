@@ -1,0 +1,16 @@
+# 训练产物 / 模型检查点（大文件）
+runs/
+
+# 评测与推理输出
+test_output/
+
+# 合并生成的训练文件（可由 train_data/ 重新生成）
+data/train_all.jsonl
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 其他
+.DS_Store

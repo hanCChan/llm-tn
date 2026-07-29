@@ -1,0 +1,5 @@
+<resources>
+    <!-- Compose-only app: the platform NoActionBar theme just provides the window
+         shell; all colors/typography come from MaterialTheme in Compose. -->
+    <style name="Theme.Wenet" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

@@ -1,0 +1,77 @@
+# Copyright (c) 2022 Zhendong Peng (pzd17@tsinghua.org.cn)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from pynini import accep, cross, string_file
+from pynini.lib.pynutil import add_weight, delete, insert
+
+from tn.chinese.rules.cardinal import Cardinal
+from tn.processor import Processor
+from tn.utils import get_abs_path
+
+
+class Measure(Processor):
+
+    def __init__(self, cardinal=None):
+        super().__init__(name="measure")
+        self.cardinal = cardinal or Cardinal()
+        self.measure = None
+        self.denominator = None
+        self.annual = None
+        self.build_tagger()
+        self.build_verbalizer()
+
+    def build_tagger(self):
+        units_en = string_file(get_abs_path("chinese/data/measure/units_en.tsv"))
+        units_zh = string_file(get_abs_path("chinese/data/measure/units_zh.tsv"))
+        units = add_weight((cross("k", "千") | cross("w", "万")), 0.1).ques + (units_en | units_zh)
+        rmspace = delete(" ").ques
+        to = cross("-", "到") | cross("~", "到") | accep("到")
+
+        number = self.cardinal.number
+        strip_comma = self.build_rule(delete(",") | delete("，"), self.DIGIT, self.DIGIT)
+        number = strip_comma @ number
+        number @= self.build_rule(cross("二", "两"), "[BOS]", "[EOS]")
+        # 1-11个，1个-11个
+        prefix = number + (rmspace + units).ques + to
+        measure = prefix.ques + number + rmspace + units
+
+        for unit in ["两", "月", "号"]:
+            measure @= self.build_rule(cross("两" + unit, "二" + unit), l="[BOS]")
+            measure @= self.build_rule(cross("到两" + unit, "到二" + unit), r="[EOS]")
+
+        # xxxx年, xxxx-xxxx年
+        digits = self.cardinal.digits
+        yyyy = digits**4
+        unit = accep("年") | accep("年度") | accep("赛季")
+        prefix = yyyy + (rmspace + unit).ques + to
+        annual = prefix.ques + yyyy + unit
+
+        self.measure = measure.optimize()
+        self.annual = annual.optimize()
+        self.denominator = (measure | units).optimize()
+        tagger = self.tag_field("value", self.measure | self.annual)
+
+        # 10km/h
+        rmsign = rmspace + delete("/") + rmspace
+        tagger |= self.tag_field("numerator", self.measure) + rmsign + insert(" ") + self.tag_field(
+            "denominator", self.denominator)
+        self.tagger = self.add_tokens(tagger)
+
+    def build_verbalizer(self):
+        value = delete('value: "') + (self.measure | self.annual) + delete('"')
+        self.verbalizer = self.delete_tokens(value)
+        denominator = delete('denominator: "') + self.denominator + delete('" ')
+        numerator = delete('numerator: "') + self.measure + delete('"')
+        verbalizer = insert("每") + denominator + numerator
+        self.verbalizer |= self.delete_tokens(verbalizer)

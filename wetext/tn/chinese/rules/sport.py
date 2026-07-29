@@ -1,0 +1,49 @@
+# Copyright (c) 2022 Zhendong Peng (pzd17@tsinghua.org.cn)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from pynini import string_file
+from pynini.lib.pynutil import delete, insert
+
+from tn.chinese.rules.cardinal import Cardinal
+from tn.processor import Processor
+from tn.utils import get_abs_path
+
+
+class Sport(Processor):
+
+    def __init__(self, cardinal=None):
+        super().__init__(name="sport")
+        self.cardinal = cardinal or Cardinal()
+        self.team = None
+        self.score = None
+        self.build_tagger()
+        self.build_verbalizer()
+
+    def build_tagger(self):
+        country = string_file(get_abs_path("chinese/data/sport/country.tsv"))
+        club = string_file(get_abs_path("chinese/data/sport/club.tsv"))
+        rmsign = delete("/") | delete("-") | delete(":")
+        rmspace = delete(" ").ques
+
+        number = self.cardinal.number
+        self.team = (country | club).optimize()
+        self.score = (rmspace + number + rmsign + insert("比") + number + rmspace).optimize()
+        tagger = self.tag_field("team", self.team) + insert(" ") + self.tag_field("score", self.score)
+        self.tagger = self.add_tokens(tagger)
+
+    def build_verbalizer(self):
+        team = delete('team: "') + self.team + delete('" ')
+        score = delete('score: "') + self.score + delete('"')
+        verbalizer = team + score
+        self.verbalizer = self.delete_tokens(verbalizer)

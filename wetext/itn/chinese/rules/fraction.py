@@ -1,0 +1,57 @@
+# Copyright (c) 2022 Xingchen Song (sxc19@tsinghua.org.cn)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from pynini import string_file
+from pynini.lib.pynutil import add_weight, delete, insert
+
+from itn.chinese.rules.cardinal import Cardinal
+from tn.processor import Processor
+from itn.utils import get_abs_path
+
+
+class Fraction(Processor):
+
+    def __init__(self, cardinal=None):
+        super().__init__(name="fraction")
+        self.cardinal = cardinal or Cardinal()
+        self.build_tagger()
+        self.build_verbalizer()
+
+    def build_tagger(self):
+        number = self.cardinal.number
+        sign = string_file(get_abs_path("chinese/data/number/sign.tsv"))  # + -
+
+        # NOTE(xcsong): default weight = 1.0,  set to -1.0 means higher priority
+        #   For example,
+        #       1.0, 负二分之三 -> { sign: "" denominator: "-2" numerator: "3" }
+        #       -1.0,负二分之三 -> { sign: "-" denominator: "2" numerator: "3" }
+        self.sign = sign.ques
+        self.denominator = number + delete("分之")
+        self.numerator = number
+        signed = add_weight(
+            self.tag_field("sign", sign) + insert(" ") + self.tag_field("denominator", self.denominator) + insert(" ") +
+            self.tag_field("numerator", self.numerator),
+            -1.0,
+        )
+        unsigned = (self.tag_field("sign", self.sign) + insert(" ") + self.tag_field("denominator", self.denominator) +
+                    insert(" ") + self.tag_field("numerator", self.numerator))
+        tagger = signed | unsigned
+        self.tagger = self.add_tokens(tagger)
+
+    def build_verbalizer(self):
+        sign = self.verbalize_field("sign", self.sign)
+        numerator = self.verbalize_field("numerator", self.numerator, leading_space=True)
+        denominator = self.verbalize_field("denominator", self.denominator, leading_space=True)
+        verbalizer = sign + numerator + insert("/") + denominator
+        self.verbalizer = self.delete_tokens(verbalizer)
