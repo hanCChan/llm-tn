@@ -50,10 +50,14 @@ class Date(Processor):
         month_two_digit = self.tag_field("month", mm)
         day = self.tag_field("day", self.day)
 
-        # yyyy/m/d | yyyy/mm/dd | dd/mm/yyyy
+        # yyyy/m/d | dd/mm/yyyy | mm/dd/yyyy(美式 M/D/Y)
         # yyyy/0m | 0m/yyyy | 0m/dd
+        # 歧义主要靠"月段必须匹配 mm(01-12)"自动消解: 10/20/2018 里 20 不能当月, 只能
+        # 走 M/D/Y(20日); 20/10/2018 里 20 不能当月, 只能 D/M/Y。仅 xx/xx/yyyy 两段都
+        # ≤12 时(如 01/02/2018)才真歧义, 由 union 顺序定(此处 D/M/Y 在前), 样本罕见。
         date = ((year + rmsign + month + rmsign + day)
                 | (day + rmsign + month + rmsign + year)
+                | (month + rmsign + day + rmsign + year)
                 | (year + rmsign + month_two_digit)
                 | (month_two_digit + rmsign + year)
                 | (month_two_digit + rmsign + day))

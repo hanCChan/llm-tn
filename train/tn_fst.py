@@ -1,13 +1,20 @@
-"""读音: 退回纯 wetext 默认 Normalizer(不再用场景化 normalizer)。
+"""读音: LLM 定类 + wetext 场景 normalizer 按 span 路由读音。
 
-场景化按类 normalizer 的方案已移除。现在直接用 wetext 默认 Normalizer 读整句。
-LLM 标注仍产出(供 tag 评测), 但不参与读音——默认 normalizer 不做按 span 路由。
-(后续更简单的方案会在此默认基础上迭代。)
+LLM 把句子标成 [(span, "CLASS:ctx")...]。TNReader 按 span 的 CLASS 路由到对应
+场景 normalizer 逐段读音, span 之外的普通文本用默认 Normalizer 兜底, 再拼接成整句。
+
+场景 normalizer(各自 boost 相关规则):
+    NormalizerTime  -> DATE / TIME              (date/time)
+    NormalizerMath  -> MATH / FRACTION / MEASURE / MONEY / PERCENT
+    NormalizerScore -> SCORE                    (score)
+    NormalizerPhone -> PHONE / VERSION          (phone/version)
+    NormalizerSerial-> SERIAL / ADDRESS         (逐位读, 1 读"一"而非"幺", 段间"-"读"杠")
+    其余(未识别类) -> 默认 Normalizer
 
 用法:
     from train.tn_fst import TNReader
     r = TNReader()
-    r.apply("会议3月5日下午2点开")   # -> 默认 TN 口语串
+    r.apply("会议3月5日下午2点开", [["3月5日", "DATE:date"], ["下午2点", "TIME:time"]])
 """
 import os
 import sys
@@ -19,21 +26,126 @@ if _WETEXT not in sys.path:
 from importlib_resources import files            # noqa: E402
 from tn.chinese.normalizer import Normalizer     # noqa: E402
 
+from tn.chinese.normalizer_math import NormalizerMath     # noqa: E402
+from tn.chinese.normalizer_phone import NormalizerPhone   # noqa: E402
+from tn.chinese.normalizer_score import NormalizerScore   # noqa: E402
+from tn.chinese.normalizer_serial import NormalizerSerial  # noqa: E402
+from tn.chinese.normalizer_time import NormalizerTime     # noqa: E402
+
+# CLASS(取标签冒号前的类别名) -> 场景 normalizer 属性名; 未列出的类走默认 normalizer。
+_ROUTE = {
+    "DATE": "time",
+    "TIME": "time",
+    "MATH": "math",
+    "FRACTION": "math",
+    "MEASURE": "math",
+    "MONEY": "math",
+    "PERCENT": "math",
+    "SCORE": "score",
+    "PHONE": "phone",
+    "VERSION": "phone",
+    "SERIAL": "serial",
+    "ADDRESS": "serial",
+}
+
 
 class TNReader:
     def __init__(self):
-        # 原 wetext 默认 Normalizer; full_to_half=False 保留全/半角标点, 便于逐字对齐 gold_spoken
-        self.default = Normalizer(cache_dir=files("tn") / "fsts", full_to_half=False)
+        # full_to_half=False 保留全/半角标点, 便于逐字对齐 gold_spoken。
+        # 每个场景 normalizer 用独立 cache 子目录, 避免共享 cache_dir 时的 FST 撞车。
+        fsts = files("tn") / "fsts"
+        self.default = Normalizer(cache_dir=fsts, full_to_half=False)
+        self.time = NormalizerTime(cache_dir=fsts / "time", full_to_half=False)
+        self.math = NormalizerMath(cache_dir=fsts / "math", full_to_half=False)
+        self.score = NormalizerScore(cache_dir=fsts / "score", full_to_half=False)
+        self.phone = NormalizerPhone(cache_dir=fsts / "phone", full_to_half=False)
+        self.serial = NormalizerSerial(cache_dir=fsts / "serial", full_to_half=False)
+
+    def _normalizer_for(self, label):
+        """标签 "CLASS:ctx" -> 场景 normalizer, 无对应场景则返回 None(走默认)。"""
+        cls = label.split(":", 1)[0].strip().upper()
+        attr = _ROUTE.get(cls)
+        return getattr(self, attr) if attr else None
+
+    def _read(self, text, normalizer):
+        """两遍读音: 先用场景 normalizer 强制读该类, 再用默认 normalizer 兜底剩余。
+
+        场景 normalizer 只 union 了少数规则, 对未覆盖的部分会原样输出(如 NormalizerTime
+        对 '3月5日' 不转), 因此第二遍默认 normalizer 补齐。场景已转成的中文(如 '三比一'
+        '幺三八')不含阿拉伯数字/符号, 默认遍不会再改动, 故两遍安全。
+        任一遍抛异常则直接返回原始文本, 不做部分兜底。
+        """
+        if not text:
+            return ""
+        try:
+            staged = normalizer.normalize(text) if normalizer is not None else text
+            return self.default.normalize(staged)
+        except Exception:
+            return text
+
+    def _locate(self, src, edits):
+        """把 edits 在 src 中按出现顺序定位为不重叠的 [(start, end, label)] 区间。"""
+        spans = []
+        cursor = 0
+        for item in edits:
+            if not item:
+                continue
+            span, label = item[0], item[1]
+            if not span:
+                continue
+            idx = src.find(span, cursor)
+            if idx < 0:                       # 从头再找一次(顺序被模型打乱时的兜底)
+                idx = src.find(span)
+            if idx < 0:
+                continue
+            spans.append((idx, idx + len(span), label))
+            cursor = idx + len(span)
+        spans.sort()
+        # 丢弃与前一区间重叠的项, 保证可线性切分。
+        merged, last_end = [], -1
+        for start, end, label in spans:
+            if start < last_end:
+                continue
+            merged.append((start, end, label))
+            last_end = end
+        return merged
 
     def apply(self, src, edits=None, fallback=True):
-        """默认 TN 读音。edits 仅为兼容旧签名保留, 不参与读音。"""
-        return self.default.normalize(src)
+        """按 LLM 标注逐 span 路由读音; edits 为空时整句走默认 normalizer。"""
+        if not src:
+            return ""
+        if not edits:
+            return self.default.normalize(src)
+
+        spans = self._locate(src, edits)
+        if not spans:
+            return self.default.normalize(src) if fallback else src
+
+        out, pos = [], 0
+        for start, end, label in spans:
+            if start > pos:                                   # span 前的普通文本
+                out.append(self._read(src[pos:start], self.default))
+            out.append(self._read(src[start:end], self._normalizer_for(label)))
+            pos = end
+        if pos < len(src):                                    # 末尾普通文本
+            out.append(self._read(src[pos:], self.default))
+        return "".join(out)
 
 
 if __name__ == "__main__":
     r = TNReader()
-    for s in ["会议3月5日下午2点在中山路88号3栋502室开，预算¥5000。",
-              "比分3:1，胜率75%，型号N8599，版本1.2.3。"]:
-        print("IN :", s)
-        print("OUT:", r.apply(s))
+    samples = [
+        ("会议3月5日下午2点在中山路88号3栋502室召开，预算¥5000，联系电话400-820-8820。",
+         [["3月5日", "DATE:date"], ["下午2点", "TIME:time"], ["88号3栋502室", "ADDRESS:address"],
+          ["¥5000", "MONEY:money"], ["400-820-8820", "PHONE:phone"]]),
+        ("这场比分3:1，胜率75%，用的是型号N8599、版本1.2.3的设备。",
+         [["3:1", "SCORE:score"], ["75%", "PERCENT:percent"], ["N8599", "SERIAL:serial"],
+          ["1.2.3", "VERSION:version"]]),
+        ("仓库还有5箱货，计算3x60=180千米，活动10月1日~10月7日。",
+         [["5箱", "MEASURE:measure"], ["3x60=180千米", "MATH:math"], ["10月1日~10月7日", "DATE:date"]]),
+    ]
+    for s, edits in samples:
+        print("IN  :", s)
+        print("TAG :", edits)
+        print("OUT :", r.apply(s, edits))
         print()
