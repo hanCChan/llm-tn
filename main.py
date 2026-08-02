@@ -22,7 +22,7 @@ MODEL = "model/v2"
 class TN:
     def __init__(self, model=MODEL, max_new_tokens=128):
         self.max_new_tokens = max_new_tokens
-        self.tok = AutoTokenizer.from_pretrained(model)
+        self.tok = AutoTokenizer.from_pretrained(model, fix_mistral_regex=True)
         self.model = AutoModelForCausalLM.from_pretrained(model, dtype=torch.float32)
         if torch.cuda.is_available():
             self.model = self.model.cuda()
@@ -59,11 +59,12 @@ def main():
     elif args:
         srcs = [" ".join(args)]
     else:
-        SERIALsrcs = [
+        srcs = [
             "这场比分3:1，胜率75%，用的是型号N8599、版本1.2.3的设备。",
             "所以1.857（857循环）＞ 1.85（7循环）＞1.8（57循环）",
             "所以1.857 > 1.85 > 1.8（57循环）",
-            "所以1.857 ＞ 1.85 > 1.8（57循环）"
+            "所以1.857 ＞ 1.85 > 1.8（57循环）",
+            "国庆假期覆盖了01年04月~10年04月，是旅游的黄金周。"
         ]
     tn = TN()
     for s in srcs:

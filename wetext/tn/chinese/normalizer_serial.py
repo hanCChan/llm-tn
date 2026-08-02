@@ -43,7 +43,7 @@ class NormalizerSerial(Processor):
         full_to_half=True,
         tag_oov=False,
     ):
-        super().__init__(name="zh_normalizer", token_orders=TOKEN_ORDERS)
+        super().__init__(name="zh_normalizer_serial", token_orders=TOKEN_ORDERS)
         self.remove_interjections = remove_interjections
         self.remove_erhua = remove_erhua
         self.traditional_to_simple = traditional_to_simple
@@ -51,7 +51,7 @@ class NormalizerSerial(Processor):
         self.full_to_half = full_to_half
         self.tag_oov = tag_oov
         self.build_fst(
-            "zh_tn",
+            "zh_tn_serial",
             cache_dir,
             overwrite_cache,
             {

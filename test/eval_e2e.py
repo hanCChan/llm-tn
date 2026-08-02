@@ -86,6 +86,7 @@ def eval_file(tn, path, dump=None):
                 f"PRED_TAG: {sorted(pred)}\n"
                 f"GOLD_TXT: {gold_spoken}\n"
                 f"PRED_TXT: {pred_spoken}\n"
+                f"{'TAG_OK' if pred == gold else 'TAG_DIFF'}\n\n"
                 f"{'TXT_OK' if ok else 'TXT_DIFF'}\n\n"
             )
 

@@ -1,6 +1,7 @@
 """Qwen3-0.6B-Base 全参 SFT。
 conda activate qwen3_tn
-python -m tn.train.sft --data data/train_v0.jsonl --out runs/sft_v0
+find data/train_data -type f -name "*.jsonl" -exec cat {} + > data/train_merged.jsonl
+python -m train.sft --data data/train_merged.jsonl --out sft/v5 --fp32
 """
 
 import argparse
@@ -23,12 +24,14 @@ def main():
     ap.add_argument("--data", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--model", default=MODEL_ID)
-    ap.add_argument("--epochs", type=float, default=3.0)
+    ap.add_argument("--epochs", type=float, default=1.0)
     ap.add_argument("--lr", type=float, default=2e-5)
-    ap.add_argument("--global-batch", type=int, default=256)
-    ap.add_argument("--per-device", type=int, default=64)
+    ap.add_argument("--global-batch", type=int, default=128)
+    ap.add_argument("--per-device", type=int, default=4)
     ap.add_argument("--resume", action="store_true")
     ap.add_argument("--fp32", action="store_true", help="纯 fp32 训练(最稳,T4 上慢但无 AMP 隐患)")
+    ap.add_argument("--save-total-limit", type=int, default=None,
+                    help="最多保留几个 epoch checkpoint;默认 None=保留全部(每个 epoch 都留), 便于逐 epoch 评估选优")
     args = ap.parse_args()
 
     tok = AutoTokenizer.from_pretrained(args.model)
@@ -64,7 +67,7 @@ def main():
         fp16=use_fp16,
         logging_steps=10,
         save_strategy="epoch",
-        save_total_limit=1,
+        save_total_limit=args.save_total_limit,
         report_to=["tensorboard"],
         dataloader_num_workers=4,
         seed=42,

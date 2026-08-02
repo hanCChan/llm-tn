@@ -79,7 +79,10 @@ class TNReader:
             return ""
         try:
             staged = normalizer.normalize(text) if normalizer is not None else text
-            return self.default.normalize(staged)
+            # print(f"stage1: {staged}")
+            staged = self.default.normalize(staged)
+            # print(f"stage2: {staged}")
+            return staged
         except Exception:
             return text
 

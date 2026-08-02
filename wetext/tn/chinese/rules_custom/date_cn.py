@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pynini import accep, string_file
+from pynini import accep, string_file, cross
 from pynini.lib.pynutil import delete, insert
 
 from tn.processor import Processor
@@ -44,13 +44,13 @@ class DateCN(Processor):
     def build_tagger(self):
         digit = string_file(get_abs_path("chinese/data/number/digit.tsv"))
         zero = string_file(get_abs_path("chinese/data/number/zero.tsv"))
-        yyyy = digit + (digit | zero)**3
         m = string_file(get_abs_path("chinese/data/date/m.tsv"))
         mm = string_file(get_abs_path("chinese/data/date/mm.tsv"))
         d = string_file(get_abs_path("chinese/data/date/d.tsv"))
         dd = string_file(get_abs_path("chinese/data/date/dd.tsv"))
 
-        self.year = (yyyy + insert("年")).optimize()
+        year_num = (digit | zero).plus.optimize()
+        self.year = (year_num + insert("年")).optimize()
         self.month = (m | mm).optimize()
         # 纯数字读法(剥掉 tsv 值固定的"日") + 原样保留输入的"日"/"号"。
         day_num = ((d | dd) @ self.build_rule(delete("日"), r="[EOS]")).optimize()
@@ -60,7 +60,7 @@ class DateCN(Processor):
         month = self.tag_field("month", self.month) + delete("月")
         day = self.tag_field("day", self.day)
         date = ((year + insert(" ") + month + (insert(" ") + day).ques)
-                | (month + (insert(" ") + day).ques))
+                | (month + (insert(" ") + day).ques) | (day))
         tagger = self.add_tokens(date)
 
         if self.range_tagger is None:
@@ -72,5 +72,6 @@ class DateCN(Processor):
         year = delete('year: "') + self.year + delete('" ')
         month = delete('month: "') + self.month + delete('"')
         day = delete(' day: "') + self.day + delete('"')
-        verbalizer = year.ques + month + day.ques
-        self.verbalizer = self.delete_tokens(verbalizer)
+        verbalizer_ymd = year.ques + month.ques + day.ques
+        verbalizer_d = delete('day: "') + self.day + delete('"')
+        self.verbalizer = self.delete_tokens(verbalizer_ymd | verbalizer_d)

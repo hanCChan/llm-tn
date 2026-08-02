@@ -93,6 +93,7 @@ class NormalizerTime(Processor):
             RuleSpec(date_cn, 1.01),
             RuleSpec(date, 1.02),
             RuleSpec(time, 1.05),
+            RuleSpec(measure, 1.06),
             RuleSpec(char, 100),
             RuleSpec(range_rule),
         )
