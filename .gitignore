@@ -7,6 +7,9 @@ test_output/
 # 合并生成的训练文件（可由 train_data/ 重新生成）
 data/train_all.jsonl
 
+# 编译产生的 FST 缓存（可由源码重建, 且 bundle 目录名随源码指纹变化）
+wetext/tn/fsts/
+
 # Python
 __pycache__/
 *.pyc

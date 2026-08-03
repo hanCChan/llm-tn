@@ -1,0 +1,19 @@
+# 编译产生的 FST 缓存（镜像内重建, 见 train/tn_fst.py 的 TNReader）
+wetext/tn/fsts/
+
+# 训练产物 / 评测输出
+runs/
+test_output/
+
+# 合并生成的训练文件（可由 train_data/ 重新生成）
+data/train_all.jsonl
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 其他
+.git/
+.DS_Store
+*.log
