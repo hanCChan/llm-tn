@@ -34,10 +34,14 @@ from pydantic import BaseModel, Field
 import logger
 from logger import make_extra_tags
 from train.constants import TN_PREFIX, SEP, EOS_ID, SEPARATOR
+from train.split import has_digit, split_chunks
 from train.tn_fst import TNReader
 
 MODEL = "model/v2"
 MAX_NEW_TOKENS = 128
+# 单次请求最多送 8 个含数字的片进模型; 超出的片原样返回, 不标注也不读音。
+# 给 GPU 一个每请求硬上限, 长文本不会把 batch 占死。
+MAX_CHUNKS = 8
 
 _state = {"engine": None, "tok": None, "reader": None, "error": None}
 # pynini 的 FST 应用不保证线程安全; 只有 16ms, 串行化代价可忽略。
@@ -114,7 +118,7 @@ class NormalizeOut(BaseModel):
     requestid: str = Field(..., description="回传请求 id, 便于跨服务对账")
 
 
-async def _tag(text):
+async def _tag(text, request_id, tags):
     """vLLM greedy 标注。用 token ids 而非字符串喂入, 与 main.py 的
     add_special_tokens=False 保持一致, 避免 vLLM 自行加特殊 token。"""
     from vllm import SamplingParams, TokensPrompt
@@ -127,10 +131,15 @@ async def _tag(text):
     )
     final = None
     async for out in _state["engine"].generate(
-        TokensPrompt(prompt_token_ids=prompt_ids), params, request_id=uuid.uuid4().hex
+        TokensPrompt(prompt_token_ids=prompt_ids), params, request_id=request_id
     ):
         final = out
-    return _parse_edits(final.outputs[0].text.strip()) if final else []
+    if final is None:
+        return []
+    # 撞上限意味着后面的 span 全被丢掉, 但接口照样返回 200 —— 这个失败模式必须留痕。
+    if final.outputs[0].finish_reason == "length":
+        logger.warning(f"标注被截断 max_tokens={app.state.max_new_tokens} chunk={text}", extra=tags)
+    return _parse_edits(final.outputs[0].text.strip())
 
 
 @app.get("/health", response_model=HealthOut)
@@ -153,20 +162,51 @@ async def normalize(body: NormalizeIn):
 
     t0 = time.perf_counter()
     try:
-        edits = await _tag(body.text)
+        # 切片 -> 只取前 MAX_CHUNKS 个含数字的片送模型; 其余(无数字的、以及超出
+        # 配额的)原样返回, 既不过 LLM 也不过 FST。切分无损, 拼回去不掉字。
+        chunks = split_chunks(body.text)
+        picked = [i for i, c in enumerate(chunks) if has_digit(c)]
+        dropped = picked[MAX_CHUNKS:]
+        picked = picked[:MAX_CHUNKS]
+        logger.info(f"event=split | text={body.text} | chunks_num={len(chunks)} | "
+                    f"llm_idx={picked} | chunks={chunks}", extra=tags)
+        if dropped:
+            logger.warning(f"含数字片超配额, {len(dropped)} 片原样返回 "
+                           f"max_chunks={MAX_CHUNKS} idx={dropped}", extra=tags)
+
+        # 同一请求的多片并发发出, vLLM 的 continuous batching 会合批,
+        # 总延迟约等于最慢一片而非各片之和。
+        edits_per = await asyncio.gather(*(
+            _tag(chunks[i], f"{requestid}-{i}", tags) for i in picked
+        ))
         t1 = time.perf_counter()
+
+        tagged_map = dict(zip(picked, edits_per))
         async with _fst_lock:
-            spoken = await asyncio.to_thread(_state["reader"].apply, body.text, edits)
-        t2 = time.perf_counter()
+            spoken_per = await asyncio.to_thread(
+                lambda: [_state["reader"].apply(c, tagged_map[i]) if i in tagged_map else c
+                         for i, c in enumerate(chunks)]
+            )
     except Exception as e:                     # noqa: BLE001 - 兜住单请求异常, 别让它冒到 uvicorn
         logger.exception(f"规整失败 text={body.text} err={type(e).__name__}: {e}", extra=tags)
         raise HTTPException(500, detail=f"{type(e).__name__}: {e}") from e
 
+    spoken = "".join(spoken_per)
+    edits = [e for per in edits_per for e in per]
+
+    # 过了 LLM 的片各打一条: 长文本出问题时要能定位到具体哪一片标错。
+    for i in picked:
+        detail = " ".join(f"[{span} -> {label}]" for span, label in tagged_map[i]) or "-"
+        logger.info(f"event=chunk | idx={i}/{len(chunks)} | text={chunks[i]} | "
+                    f"tags={detail} | spoken={spoken_per[i]}", extra=tags)
+
     tagged = " ".join(f"[{span} -> {label}]" for span, label in edits)
     logger.info(f"event=normalize | text={body.text} | tags={tagged} | spoken={spoken}", extra=tags)
     logger.info(
-        f"event=latency | llm_ms {(t1 - t0) * 1000:.1f} | fst_ms {(t2 - t1) * 1000:.1f} | "
-        f"cost_ms {(t2 - t0) * 1000:.1f} | text_len {len(body.text)} | edits_num {len(edits)}",
+        f"event=latency | llm_ms {(t1 - t0) * 1000:.1f} | "
+        f"cost_ms {(time.perf_counter() - t0) * 1000:.1f} | "
+        f"text_len {len(body.text)} | edits_num {len(edits)} | "
+        f"chunks_num {len(chunks)} | llm_chunks {len(picked)}",
         extra=tags,
     )
     return NormalizeOut(text=body.text, spoken=spoken, edits=edits, requestid=requestid)
