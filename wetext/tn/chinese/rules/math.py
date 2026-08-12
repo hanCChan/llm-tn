@@ -71,12 +71,15 @@ class Math(Processor):
         core = (number + (delete(" ").ques + units).ques) | (number + cluster) | cluster
 
         # 运算符分两档:
-        #   num_op  纯数字链用, 含 "/" —— '1/2=0.5' 依赖它
-        #   op      有字母参与时用, 不含 "/" —— "/" 在中文文本里绝大多数不是算式除号, 而是
-        #           单位(km/h g/cm³)、分数、月日、比分或路径。字母能当操作数后 'g/cm³' 就成
-        #           了合法算式被读成"g除以cm的立方"; 代数式真要表除法写 ÷ 或分数线。
+        #   num_op  纯数字链用
+        #   op      有字母参与时用
+        # 两档都含 "/"。"/" 在中文文本里高度歧义(单位 km/h、分数、月日、比分、路径),
+        # 但定类由上游(LLM)决定; 一旦走到 math 就按算式除号读。代数链也要认它, 否则
+        # '1/2+√(9)=3.5' 里没有一条链能覆盖整条式子 —— numeric 吃不下 √(9), algebraic
+        # 吃不下 "/", 结果 '1/2' 被 fraction 抢走、'+' 落给 char 原样漏出来。
+        # 'g/cm³' 这类单位靠 measure 的更优权重争取, 而非在此限制 math。
         num_op = delete(" ").ques + (operator | symbols | slash) + delete(" ").ques
-        op = delete(" ").ques + (operator | symbols) + delete(" ").ques
+        op = num_op
 
         # 指数可以是括号算式: 2^(3+4) -> 二的三加四次方, e^(iπ) -> e的i派次方。
         # 指数层用 core 而非完整操作数 —— 否则 caret -> 操作数 -> suffix_op -> caret
@@ -99,7 +102,10 @@ class Math(Processor):
         # 右括号在后扩展符之前 —— '(a+b)²' 的写法是 ')' 在 '²' 前。
         open_grp = (delete("(") | delete("|")).ques
         close_grp = (delete(")") | delete("|")).ques
-        operand = (open_grp + prefix_op.star + open_grp + (call | core)
+        # 符号位: 数字自带(cardinal 的 sign), 但字母/函数没有 —— 不补的话 'a=-b'、
+        # 'f(-x)=-f(x)' 整条链会崩掉, 连 '=' 都落给 char 原样漏出。
+        sign = (cross("-", "负") | cross("+", "正")).ques
+        operand = (open_grp + sign + prefix_op.star + open_grp + (call | core)
                    + close_grp + suffix_op + close_grp)
         # 纯数字链: 操作数只能是"数字(可带单位)", 运算符含 "/"。这是本规则的原有行为,
         # 裸数字也靠它读出 —— 注: 用 .star 而非 .plus, 运算符出现 0 次时退化成单个操作数,
@@ -114,8 +120,17 @@ class Math(Processor):
         # 和 'cm³' 两个单操作数, 把 ³ 读成"的立方"。裸数字的 0 运算符退化路径由上面的
         # numeric 链(.star)保留, 两者互不影响。
         algebraic = operand + (op + operand).plus
+        # cluster 限长 3 只挡住"整词匹配", 挡不住 tagger 从词中间下刀 —— 'COVID-19' 会被
+        # 切成 char{C} char{O} math{VID-19} 读出"COVID减十九", 'e-mail' 切成 math{e-mai}
+        # char{l}。判据是 '-' 紧邻的字母游程长度: 4 个以上字母是英文词/型号而非变量簇,
+        # 故把"长字母游程 + '-'"(及反向)整体收成一个 token 原样输出, 权重优于代数链,
+        # 抢在它前面, tagger 就没法在词中间把 '-' 当减号了。
+        # 用 4 而非 3: 'abc' 是注释里认可的合法变量簇(mc kx iπ abc)。
+        long_word = letter**4 + letter.star
+        hyphen_word = add_weight((long_word + accep("-")) | (accep("-") + long_word),
+                                 self.MIN_NEG_WEIGHT)
 
-        self.math = (numeric | algebraic | unambiguous_operator).optimize()
+        self.math = (numeric | algebraic | unambiguous_operator | hyphen_word).optimize()
         self.tagger = self.add_tokens(self.tag_field("value", self.math))
 
     def build_verbalizer(self):

@@ -1,0 +1,42 @@
+$\frac{1}{2}$ => 1/2
+$\frac{3}{4}$ => 3/4
+$\frac{a+b}{c}=1$ => a+b/c=1
+$\frac{1}{2}+\sqrt{9}=3.5$ => 1/2+√(9)=3.5
+$\sqrt{16}=4$ => √(16)=4
+$\sqrt[3]{8}=2$ => 3次√(8)=2
+$x^{2}$ => x^(2)
+$x^2$ => x^2
+$x_{i+1}$ => xi+1
+$\sum_{i=1}^{n}$ => 从i=1到n求和
+$\prod_{i=1}^{n}$ => 从i=1到n求积
+$\int_{a}^{b}$ => 从a到b求积分
+$\sum_{i=1}^{n} a_i = 10$ => 从i=1到n求和 a_i = 10
+$\mathbb{R}$ => R
+$x \in \mathbb{R}$ => x 属于 R
+$\mathbf{v}$ => v
+这是 \textbf{重要内容} 请注意 => 这是 重要内容 请注意
+\emph{强调} 和 \underline{下划线} => 强调 和 下划线
+$\mathcal{F}$ => F
+$\leq \neq \approx \sim$ => ≤ ≠ ≈ 相似于
+$\pm \cdot \notin \subseteq$ => ± × 不属于 包含于
+$\cup \cap \exists \Rightarrow \iff$ => 并 交 存在 推出 等价于
+$x^{2}+y_{1}\geq 0$ => x^(2)+y1≥ 0
+$2^{10}=1024$ => 2^(10)=1024
+$a^{2}+b^{2}=c^{2}$ => a^(2)+b^(2)=c^(2)
+$\alpha \times \beta = 1$ => α × β = 1
+$\pi \approx 3.14$ => π ≈ 3.14
+$3 \div 2$ => 3 ÷ 2
+$x \in D$ => x 属于 D
+$\forall x \in D$ => 任意 x 属于 D
+面积是 $1+\left( \frac{1}{2} \right)$ 平方米 => 面积是 1+ 1/2  平方米
+$\begin{align}x=1\end{align}$ => x=1
+$x^{2} \label{eq:1}+1$ => x^(2) +1
+\(x+1=2\) => x+1=2
+\[x+1=2\] => x+1=2
+若存在非零常数 T ，使得对任意 x \in D ，均有 x+T \in D 且 f(x+T) = f(x) => 若存在非零常数 T ，使得对任意 x 属于 D ，均有 x+T 属于 D 且 f(x+T) = f(x)
+普通文本没有公式 => 普通文本没有公式
+价格$100，优惠$20 => 价格$100，优惠$20
+收费$5和$8 => 收费$5和$8
+总价 $50 美元 => 总价 $50 美元
+The cost is $5 or $10 total => The cost is $5 or $10 total
+cost $5 and $8 here => cost $5 and $8 here

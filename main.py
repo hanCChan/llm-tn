@@ -14,6 +14,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from train.constants import TN_PREFIX, SEP, EOS_ID, SEPARATOR
+from train.latex import delatex
 from train.tn_fst import TNReader
 
 MODEL = "model/v2"
@@ -47,7 +48,12 @@ class TN:
         return edits
 
     def normalize(self, src):
-        """中文文本 -> (口语文本, LLM标注)"""
+        """中文文本 -> (口语文本, LLM标注)
+
+        先把 LaTeX 记法改写成 math 规则认得的写法(\\frac{1}{2} -> 1/2), 再走标注+读音。
+        改写是确定性的正则替换, 不含 LaTeX 的文本原样返回。
+        """
+        src = delatex(src)
         edits = self.tag(src)
         return self.reader.apply(src, edits), edits
 
@@ -60,6 +66,8 @@ def main():
         srcs = [" ".join(args)]
     else:
         srcs = [
+            "COVID-19是一种新型病毒",
+            "若存在非零常数  T ，使得对任意  x in D ，均有  x+T in D  且  f(x+T)=2x+1，那么g(x)=\\frac{x^2}{x}",
             "[y][in2]卡里100块"
             "这场比分3:1，胜率75%，用的是型号N8599、版本1.2.3的设备。",
             "所以1.857（857循环）＞ 1.85（7循环）＞1.8（57循环）",
