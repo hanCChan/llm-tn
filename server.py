@@ -4,10 +4,11 @@
     python server.py --host 127.0.0.1 --port 9000 --model model/v2
 
     curl -s localhost:8000/normalize -H 'Content-Type: application/json' \
-         -d '{"text": "会议3月5日下午2点，客服电话400-820-8820", "requestid": "abc123"}'
+         -d '{"text": "会议3月5日下午2点，客服电话400-820-8820", "requestid": "abc123", "sdkappid": 1400000001}'
 
 请求可带 requestid(不带则服务端生成), 响应回传同一个值; 日志以它为结构化字段,
-按 requestid 就能捞出一路请求的全部日志。日志走 logger 包写 log/app.log,
+按 requestid 就能捞出一路请求的全部日志。另可带 sdkappid, 同样进日志字段,
+用来按业务方聚合。日志走 logger 包写 log/app.log,
 不打 stdout —— start.sh 里 stdout 是丢弃的。
 
 管线与 main.py 一致, 只是把 LLM 标注换成 vLLM AsyncLLM:
@@ -110,6 +111,7 @@ class HealthOut(BaseModel):
 class NormalizeIn(BaseModel):
     text: str = Field(..., description="待规整的中文文本")
     requestid: str = Field("", description="调用方请求 id, 用于串联日志; 不传则服务端生成")
+    sdkappid: int = Field(0, description="调用方应用标识, 用于按业务方聚合日志")
 
 
 class NormalizeOut(BaseModel):
@@ -155,7 +157,7 @@ async def health():
 async def normalize(body: NormalizeIn):
     # 客户端不带 requestid 时服务端补一个, 保证每条日志都能定位到一路请求。
     requestid = body.requestid or uuid.uuid4().hex
-    tags = make_extra_tags(requestid)
+    tags = make_extra_tags(requestid, str(body.sdkappid))
     if _state["engine"] is None or _state["reader"] is None:
         detail = _state["error"] or "模型尚未加载完成"
         logger.error(f"503 模型未就绪: {detail}", extra=tags)
