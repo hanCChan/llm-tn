@@ -14,6 +14,10 @@ import re
 
 _DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "latex")
 _A = r"\{([^{}]*)\}"                                    # 已不含花括号的最内层参数
+# 命令前缀: 一或两个反斜杠。调用方多转义一层时会送来 '\\frac', 直接在各条规则里认掉,
+# 不必先做一遍全局归一 —— 归一得靠白名单区分命令与 'C:\\newfolder' 这类路径, 而规则
+# 本身已经限定了命令名, 天然就是白名单。裸 '\\'(LaTeX 换行)不匹配任何命令, 不受影响。
+_BS = r"\\{1,2}"
 # LaTeX 公式的四类特征, 命中任一即认为整句含公式:
 #   1. 反斜杠命令与定界符: '\frac' '\alpha' '\begin{...}' '\(' '\['
 #      命令限定 2+ 字母, 减少 '\n' '\t' 这类代码转义符的误命中; 词表里最短的
@@ -35,35 +39,36 @@ def _load(name):
 
 _TO_UNICODE = _load("to_unicode.tsv")                   # \times -> ×, 由 math 规则读
 _TO_CHINESE = _load("to_chinese.tsv")                   # \in -> 属于, 无 unicode 才给中文
-# 长命令优先, 否则 \le 会先吃掉 \leq 的前缀。
-_CMD = re.compile("(?:%s)(?![A-Za-z])" % "|".join(
-    re.escape(c) for c in sorted(set(_TO_UNICODE) | set(_TO_CHINESE), key=len, reverse=True)))
+# 长命令优先, 否则 \le 会先吃掉 \leq 的前缀。命令名去掉表里的反斜杠, 由 _BS 统一带上。
+_CMD = re.compile("%s(?:%s)(?![A-Za-z])" % (_BS, "|".join(
+    re.escape(c.lstrip("\\")) for c in sorted(set(_TO_UNICODE) | set(_TO_CHINESE),
+                                              key=len, reverse=True))))
 
 _RULES = [
     # 排版噪声: \quad x -> ' x'    a\,b -> ab
-    (re.compile(r"\\(?:displaystyle|limits|nolimits|quad|qquad)|\\[,;!: ]"), ""),
+    (re.compile(_BS + r"(?:displaystyle|limits|nolimits|quad|qquad)|" + _BS + r"[,;!: ]"), ""),
     # 只标高度的定界符: \left(a\right) -> a    \left| x \right| -> ' x '
-    (re.compile(r"\\(?:left|right)\s*(?:\\[A-Za-z]+|.)"), ""),
+    (re.compile(_BS + r"(?:left|right)\s*(?:" + _BS + r"[A-Za-z]+|.)"), ""),
     # 取内容: \text{速度} -> 速度  \mathrm{d} -> d  \mathbb{R} -> R  \textbf{重要} -> 重要
     # 只改字形的命令, 花括号里是正文该照读 —— 不列进来会被 _FINAL 当未知命令连内容一起删掉。
-    (re.compile(r"\\(?:text(?:bf|it|rm|sf|tt|up|sl|md|normal)?"
+    (re.compile(_BS + r"(?:text(?:bf|it|rm|sf|tt|up|sl|md|normal)?"
                 r"|math(?:rm|bf|bb|it|cal|sf|tt|frak)"
                 r"|emph|underline|operatorname)\s*" + _A), r"\1"),
     # 分式: \frac{1}{2} -> 1/2    \dfrac{a+b}{c} -> a+b/c
-    (re.compile(r"\\[dt]?frac\s*%s\s*%s" % (_A, _A)), r"\1/\2"),
+    (re.compile(_BS + r"[dt]?frac\s*%s\s*%s" % (_A, _A)), r"\1/\2"),
     # 开方: \sqrt[3]{8} -> 3次√(8)
-    (re.compile(r"\\sqrt\s*\[([^\[\]]*)\]\s*" + _A), r"\1次√(\2)"),
+    (re.compile(_BS + r"sqrt\s*\[([^\[\]]*)\]\s*" + _A), r"\1次√(\2)"),
     # 根号: \sqrt{16} -> √(16)
-    (re.compile(r"\\sqrt\s*" + _A), r"√(\1)"),
+    (re.compile(_BS + r"sqrt\s*" + _A), r"√(\1)"),
     # 大算符必须在下标/上标规则之前 —— 否则 \sum_{i=1}^{n} 的 _{i=1} 先被下标规则吃掉,
     # 剩下 \sumi 就不再是表里的 \sum, 最后残留成 '\sumi=1^(n)'。
     # 求和/求积: \sum_{i=1}^{n} -> 从i=1到n求和    \prod_{i=1}^{n} -> 从i=1到n求积
-    (re.compile(r"\\(sum|prod)\s*_\s*%s\s*\^\s*%s" % (_A, _A)),
+    (re.compile(_BS + r"(sum|prod)\s*_\s*%s\s*\^\s*%s" % (_A, _A)),
      lambda m: "从%s到%s%s" % (m.group(2), m.group(3), "求和" if m.group(1) == "sum" else "求积")),
     # 积分: \int_{a}^{b} -> 从a到b求积分
-    (re.compile(r"\\(?:int|iint|oint)\s*_\s*%s\s*\^\s*%s" % (_A, _A)), r"从\1到\2求积分"),
+    (re.compile(_BS + r"(?:int|iint|oint)\s*_\s*%s\s*\^\s*%s" % (_A, _A)), r"从\1到\2求积分"),
     # 极限: \lim_{x \to 0} -> 当x趋于0时(\to 已在上一轮被换成"趋于")
-    (re.compile(r"\\lim\s*_\s*" + _A), r"当\1时"),
+    (re.compile(_BS + r"lim\s*_\s*" + _A), r"当\1时"),
     # 反函数: f^{-1}(y) -> f逆y。f^{-1} 不是 1/f, 走下面的上标规则会读成"f的负一次方"。
     # 只认 f 且紧跟自变量括号这一种写法, 其余(g^{-1} A^{-1} x^{-1})不动。
     (re.compile(r"(?<![A-Za-z])f\s*\^\s*\{-1\}\s*\(([^()]*)\)"), r"f逆\1"),
@@ -72,7 +77,10 @@ _RULES = [
     # 下标: y_{1} -> y1, math 规则读作"y一"。裸 _ 不处理 —— snake_case 标识符里太常见。
     (re.compile(r"_\s*" + _A), r"\1"),
     # 符号命令: \times -> ×  \geq -> ≥  \alpha -> α  \in -> 属于  \forall -> 任意
-    (_CMD, lambda m: _TO_UNICODE.get(m.group(0)) or _TO_CHINESE[m.group(0)]),
+    # 查表前把前缀归一成单反斜杠 —— 匹配到的可能是 '\\times'(调用方多转义), 而表里
+    # 的 key 只带一个反斜杠, 直接拿 group(0) 查会 KeyError。
+    (_CMD, lambda m: (lambda k: _TO_UNICODE.get(k) or _TO_CHINESE[k])(
+        "\\" + m.group(0).lstrip("\\"))),
 ]
 
 # 收尾规则: 等上面全部套到定点后再跑一次。不能混在循环里 —— 丢弃未知命令那条会把
