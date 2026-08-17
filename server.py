@@ -4,10 +4,11 @@
     python server.py --host 127.0.0.1 --port 9000 --model model/v2
 
     curl -s localhost:8000/normalize -H 'Content-Type: application/json' \
-         -d '{"text": "会议3月5日下午2点，客服电话400-820-8820", "requestid": "abc123"}'
+         -d '{"text": "会议3月5日下午2点，客服电话400-820-8820", "requestid": "abc123", "sdkappid": 1400000001}'
 
 请求可带 requestid(不带则服务端生成), 响应回传同一个值; 日志以它为结构化字段,
-按 requestid 就能捞出一路请求的全部日志。日志走 logger 包写 log/app.log,
+按 requestid 就能捞出一路请求的全部日志。另可带 sdkappid, 同样进日志字段,
+用来按业务方聚合。日志走 logger 包写 log/app.log,
 不打 stdout —— start.sh 里 stdout 是丢弃的。
 
 管线与 main.py 一致, 只是把 LLM 标注换成 vLLM AsyncLLM:
@@ -34,6 +35,7 @@ from pydantic import BaseModel, Field
 import logger
 from logger import make_extra_tags
 from train.constants import TN_PREFIX, SEP, EOS_ID, SEPARATOR
+from train.latex import delatex
 from train.split import has_digit, split_chunks
 from train.tn_fst import TNReader
 
@@ -109,6 +111,7 @@ class HealthOut(BaseModel):
 class NormalizeIn(BaseModel):
     text: str = Field(..., description="待规整的中文文本")
     requestid: str = Field("", description="调用方请求 id, 用于串联日志; 不传则服务端生成")
+    sdkappid: int = Field(0, description="调用方应用标识, 用于按业务方聚合日志")
 
 
 class NormalizeOut(BaseModel):
@@ -154,7 +157,7 @@ async def health():
 async def normalize(body: NormalizeIn):
     # 客户端不带 requestid 时服务端补一个, 保证每条日志都能定位到一路请求。
     requestid = body.requestid or uuid.uuid4().hex
-    tags = make_extra_tags(requestid)
+    tags = make_extra_tags(requestid, str(body.sdkappid))
     if _state["engine"] is None or _state["reader"] is None:
         detail = _state["error"] or "模型尚未加载完成"
         logger.error(f"503 模型未就绪: {detail}", extra=tags)
@@ -162,13 +165,19 @@ async def normalize(body: NormalizeIn):
 
     t0 = time.perf_counter()
     try:
+        # LaTeX 记法先改写成 math 规则认得的写法(\frac{1}{2} -> 1/2), 再切片。
+        # 注意: 之后的 edits/spoken 都以改写后的文本为基准, 而响应里的 text 是原文。
+        written = delatex(body.text)
+        if written != body.text:
+            logger.info(f"event=latex | text={body.text} | written={written}", extra=tags)
+
         # 切片 -> 只取前 MAX_CHUNKS 个含数字的片送模型; 其余(无数字的、以及超出
         # 配额的)原样返回, 既不过 LLM 也不过 FST。切分无损, 拼回去不掉字。
-        chunks = split_chunks(body.text)
+        chunks = split_chunks(written)
         picked = [i for i, c in enumerate(chunks) if has_digit(c)]
         dropped = picked[MAX_CHUNKS:]
         picked = picked[:MAX_CHUNKS]
-        logger.info(f"event=split | text={body.text} | chunks_num={len(chunks)} | "
+        logger.info(f"event=split | text={written} | chunks_num={len(chunks)} | "
                     f"llm_idx={picked} | chunks={chunks}", extra=tags)
         if dropped:
             logger.warning(f"含数字片超配额, {len(dropped)} 片原样返回 "
@@ -201,7 +210,7 @@ async def normalize(body: NormalizeIn):
                     f"tags={detail} | spoken={spoken_per[i]}", extra=tags)
 
     tagged = " ".join(f"[{span} -> {label}]" for span, label in edits)
-    logger.info(f"event=normalize | text={body.text} | tags={tagged} | spoken={spoken}", extra=tags)
+    logger.info(f"event=normalize | text={written} | tags={tagged} | spoken={spoken}", extra=tags)
     logger.info(
         f"event=latency | llm_ms {(t1 - t0) * 1000:.1f} | "
         f"cost_ms {(time.perf_counter() - t0) * 1000:.1f} | "

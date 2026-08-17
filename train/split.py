@@ -33,11 +33,14 @@ _PUNCT = set("。！？；，、：,;:!?…\n")
 _CLOSE = set("”’」』）》】〕)\"'")
 # 全角数字同样算数字: 训练数据里 01年04月 这类全角写法存在。
 _DIGIT = re.compile(r"[0-9０-９]")
+# 无数字但要读的算式符号: delatex 改写后的公式可能整片不含数字(f(x+T) = f(x)),
+# 只靠 has_digit 会被当普通文本原样透传, 该读的 '+' '=' 就漏了。
+_MATH = re.compile(r"[+\-*/^=<>×÷≥≤≠≈≡±√∞]|[α-ωΑ-Ω]")
 
 
 def has_digit(text):
-    """片内是否含数字。不含则无需 LLM 标注 —— 也就无需读音, 原样透传。"""
-    return _DIGIT.search(text) is not None
+    """片内是否含数字或算式符号。都不含则无需 LLM 标注 —— 也就无需读音, 原样透传。"""
+    return _DIGIT.search(text) is not None or _MATH.search(text) is not None
 
 
 def _isdigit(ch):
