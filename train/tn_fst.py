@@ -1,7 +1,7 @@
 """读音: LLM 定类 + wetext 场景 normalizer 按 span 路由读音。
 
 LLM 把句子标成 [(span, "CLASS:ctx")...]。TNReader 按 span 的 CLASS 路由到对应
-场景 normalizer 逐段读音, span 之外的普通文本用默认 Normalizer 兜底, 再拼接成整句。
+场景 normalizer 逐段读音, 拼接后整句再过一遍默认 Normalizer 兜底。
 
 场景 normalizer(各自 boost 相关规则):
     NormalizerTime  -> DATE / TIME              (date/time)
@@ -67,22 +67,18 @@ class TNReader:
         attr = _ROUTE.get(cls)
         return getattr(self, attr) if attr else None
 
-    def _read(self, text, normalizer):
-        """两遍读音: 先用场景 normalizer 强制读该类, 再用默认 normalizer 兜底剩余。
+    def _read_scene(self, text, normalizer):
+        """场景遍: 用场景 normalizer 强制把该 span 读成对应类别。
 
-        场景 normalizer 只 union 了少数规则, 对未覆盖的部分会原样输出(如 NormalizerTime
-        对 '3月5日' 不转), 因此第二遍默认 normalizer 补齐。场景已转成的中文(如 '三比一'
-        '幺三八')不含阿拉伯数字/符号, 默认遍不会再改动, 故两遍安全。
-        任一遍抛异常则直接返回原始文本, 不做部分兜底。
+        场景 normalizer 只 union 了少数规则, 对未覆盖的部分原样透传(如 NormalizerTime
+        对 '3月5日' 不转), 由 apply 之后的整句默认遍补齐。抛异常则返回原文。
         """
         if not text:
             return ""
+        if normalizer is None:
+            return text
         try:
-            staged = normalizer.normalize(text) if normalizer is not None else text
-            # print(f"stage1: {staged}")
-            staged = self.default.normalize(staged)
-            # print(f"stage2: {staged}")
-            return staged
+            return normalizer.normalize(text)
         except Exception:
             return text
 
@@ -114,7 +110,16 @@ class TNReader:
         return merged
 
     def apply(self, src, edits=None, fallback=True):
-        """按 LLM 标注逐 span 路由读音; edits 为空时整句走默认 normalizer。"""
+        """按 LLM 标注逐 span 路由读音; edits 为空时整句走默认 normalizer。
+
+        两遍读音: 先逐 span 走场景 normalizer, 拼接后**整句**再走一遍默认 normalizer
+        兜底。默认遍作用于整句(而非逐段)是必要的 —— 依赖右邻上下文的规则(如罗马数字:
+        裸 XX 与英文缩写无法区分, 只有紧跟"世纪"等单位才转)在 LLM 只标出部分 span
+        (如 "XXI世纪" 只标 "XXI"、"IDR 100000" 只标 "100000")时, 逐段跑会切断该
+        上下文导致规则失效。
+        场景已转成的中文(如 '三比一' '幺三八')不含阿拉伯数字/符号, 默认遍不会再改动,
+        故两遍安全。
+        """
         if not src:
             return ""
         if not edits:
@@ -127,12 +132,17 @@ class TNReader:
         out, pos = [], 0
         for start, end, label in spans:
             if start > pos:                                   # span 前的普通文本
-                out.append(self._read(src[pos:start], self.default))
-            out.append(self._read(src[start:end], self._normalizer_for(label)))
+                out.append(src[pos:start])
+            out.append(self._read_scene(src[start:end], self._normalizer_for(label)))
             pos = end
         if pos < len(src):                                    # 末尾普通文本
-            out.append(self._read(src[pos:], self.default))
-        return "".join(out)
+            out.append(src[pos:])
+
+        staged = "".join(out)
+        try:
+            return self.default.normalize(staged)
+        except Exception:
+            return staged
 
 
 if __name__ == "__main__":

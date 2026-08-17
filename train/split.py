@@ -36,11 +36,14 @@ _DIGIT = re.compile(r"[0-9０-９]")
 # 无数字但要读的算式符号: delatex 改写后的公式可能整片不含数字(f(x+T) = f(x)),
 # 只靠 has_digit 会被当普通文本原样透传, 该读的 '+' '=' 就漏了。
 _MATH = re.compile(r"[+\-*/^=<>×÷≥≤≠≈≡±√∞]|[α-ωΑ-Ω]")
+_ROMAN = re.compile(r"[Ⅰ-Ⅻ]|[IVXLCDM]+(?:世纪|世|军团|修正案|章|届|期|卷|幕|部分|代|次)")
 
 
 def has_digit(text):
-    """片内是否含数字或算式符号。都不含则无需 LLM 标注 —— 也就无需读音, 原样透传。"""
-    return _DIGIT.search(text) is not None or _MATH.search(text) is not None
+    """片内是否含数字、算式符号或罗马数字。都不含则无需 LLM 标注 —— 也就无需读音, 原样透传。"""
+    return (_DIGIT.search(text) is not None
+            or _MATH.search(text) is not None
+            or _ROMAN.search(text) is not None)
 
 
 def _isdigit(ch):

@@ -191,3 +191,5 @@
 {"src": "精度±0.01mm。", "edits": [["±0.01mm", "MEASURE:measure"]], "meta": {"scenario": "eval/Decimal", "kind": "positive", "classes": ["MEASURE"], "ctxs": ["measure"], "domain": "Decimal", "source": "polynorm-adapted"}, "gold_spoken": "精度正负零点零一毫米。"}
 {"src": "她修了五门AP课程", "edits": [], "meta": {"scenario": "eval/Abbreviation", "kind": "negative", "classes": [], "ctxs": [], "domain": "Abbreviation", "source": "polynorm-adapted"}, "gold_spoken": "她修了五门AP课程"}
 {"src": "很多城市都已经覆盖了5G网络。", "edits": [], "meta": {"scenario": "eval/Initialism or Acronym", "kind": "negative", "classes": [], "ctxs": [], "domain": "Initialism or Acronym", "source": "polynorm-adapted"}, "gold_spoken": "很多城市都已经覆盖了五G网络。"}
+{"src": "这是XX世纪的作品。", "edits": [], "meta": {"scenario": "eval/Roman Numeral", "kind": "negative", "classes": [], "ctxs": [], "domain": "Roman Numeral", "source": "polynorm-adapted"}, "gold_spoken": "这是二十世纪的作品。"}
+{"src": "XXI世纪。", "edits": [], "meta": {"scenario": "eval/Roman Numeral", "kind": "negative", "classes": [], "ctxs": [], "domain": "Roman Numeral", "source": "polynorm-adapted"}, "gold_spoken": "二十一世纪。"}
