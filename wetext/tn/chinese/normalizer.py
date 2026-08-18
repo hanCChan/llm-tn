@@ -28,6 +28,8 @@ from tn.chinese.rules.time import Time
 from tn.chinese.rules.whitelist import Whitelist
 from tn.processor import Processor, RuleSpec
 
+from tn.chinese.rules_custom.roman import Roman
+
 TOKEN_ORDERS = {
     "date": ["year", "month", "day"],
     "fraction": ["denominator", "numerator"],
@@ -82,12 +84,15 @@ class Normalizer(Processor):
         money = Money(cardinal=cardinal)
         time = Time(range_tagger=range_rule.tagger)
         math = Math(cardinal=cardinal)
+        roman = Roman(cardinal=cardinal)
         char = Char()
 
         rules = (
             RuleSpec(date, 1.02),
             RuleSpec(whitelist, 1.03),
             RuleSpec(sport, 1.04),
+            # roman 只匹配"罗马数字+序数单位", 与其他规则的 span 天然不重叠, 权重不敏感。
+            RuleSpec(roman, 1.04),
             RuleSpec(fraction, 1.05),
             RuleSpec(measure, 1.05),
             RuleSpec(money, 1.05),
