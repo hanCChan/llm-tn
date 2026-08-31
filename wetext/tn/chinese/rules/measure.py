@@ -34,6 +34,7 @@ class Measure(Processor):
     def build_tagger(self):
         units_en = string_file(get_abs_path("chinese/data/measure/units_en.tsv"))
         units_zh = string_file(get_abs_path("chinese/data/measure/units_zh.tsv"))
+        units_zh |= accep("分之")
         units = add_weight((cross("k", "千") | cross("w", "万")), 0.1).ques + (units_en | units_zh)
         rmspace = delete(" ").ques
         to = cross("-", "到") | cross("~", "到") | accep("到")
@@ -46,7 +47,7 @@ class Measure(Processor):
         prefix = number + (rmspace + units).ques + to
         measure = prefix.ques + number + rmspace + units
 
-        for unit in ["两", "月", "号"]:
+        for unit in ["两", "月", "号", "分之"]:
             measure @= self.build_rule(cross("两" + unit, "二" + unit), l="[BOS]")
             measure @= self.build_rule(cross("到两" + unit, "到二" + unit), r="[EOS]")
 
