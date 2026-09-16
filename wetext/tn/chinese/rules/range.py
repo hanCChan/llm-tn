@@ -23,7 +23,9 @@ class Range(Processor):
 
     def __init__(self):
         super().__init__(name="range")
-        self.range = (cross("-", "到") | cross("~", "到")).optimize()
+        # '~' 的全角形态 '～'(U+FF5E)、'〜'(U+301C) 一并认。
+        self.range = (cross("-", "到") | cross("~", "到") | cross("～", "到")
+                      | cross("〜", "到")).optimize()
         self.tagger = self.add_tokens(self.tag_field("value", self.range))
         verbalizer = delete('value: "') + self.range + delete('"')
         self.verbalizer = self.delete_tokens(verbalizer)

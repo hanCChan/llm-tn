@@ -45,6 +45,9 @@ _CMD = re.compile("%s(?:%s)(?![A-Za-z])" % (_BS, "|".join(
                                               key=len, reverse=True))))
 
 _RULES = [
+    # 矩阵环境: \begin{pmatrix} -> 矩阵, 只标出"这是个矩阵", 元素照原样留给后续规则。
+    # \end{pmatrix} 由 _FINAL 的未知命令那条丢掉。
+    (re.compile(_BS + r"begin\s*\{[a-zA-Z]*matrix\*?\}"), "矩阵"),
     # 排版噪声: \quad x -> ' x'    a\,b -> ab
     (re.compile(_BS + r"(?:displaystyle|limits|nolimits|quad|qquad)|" + _BS + r"[,;!: ]"), ""),
     # 只标高度的定界符: \left(a\right) -> a    \left| x \right| -> ' x '
@@ -101,7 +104,7 @@ _DELIM = re.compile(r"\$\$(.+?)\$\$|\$(.+?)\$|\\\((.+?)\\\)|\\\[(.+?)\\\]", re.S
 # 定界符里必须是"公式的样子"才认: 只含 ASCII 算式字符与 \command, 不含汉字。
 # 否则 '价格$100，优惠$20' 里两个 $ 会被当成一对定界符, 把 '100，优惠' 剥掉;
 # '收费$5和$8' 同理。判断可以宽(has_latex), 但真要动手替换必须严。
-_FORMULA = re.compile(r"^[A-Za-z0-9\s+\-*/^_=<>(){}\[\]|.,;:'!\\×÷≥≤≠≈≡±√∞°α-ωΑ-Ω]+$")
+_FORMULA = re.compile(r"^[A-Za-z0-9\s+\-*/^_=<>(){}\[\]|.,;:'!\\&×÷≥≤≠≈≡±√∞°α-ωΑ-Ω]+$")
 # 光"全是 ASCII"不够, 还得真有算式特征(\command 或运算符/上下标/希腊字母) ——
 # 否则 'The cost is $5 or $10 total' 里两个 $ 会被当定界符, 剥成 '5 or 10'。
 # 汉字版靠 _FORMULA 就挡住了, 英文版只能靠这条。
