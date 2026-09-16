@@ -66,6 +66,16 @@ class Cardinal(Processor):
                                                                                | rmzero**8))
 
         number = digits | ten | hundred | thousand | ten_thousand | hundred_million
+        # 千分位写法单列一条: 逗号是书写格式而非数词结构 —— 逗号三位一组、中文数词四位
+        # 一组(万/亿), 两种切点不对齐('1,234,567' 的逗号在第 1、4 位后, 万边界在第 3 位后),
+        # 塞不进 thousand。故先用接受器卡住"首组 1~3 位 + 其后每组恰好 3 位", 擦掉逗号,
+        # 再喂给上面的数词语法。恰好三位这个限制是为了不碰 '第1,2章'、'1,2,3号' 这类
+        # 列举逗号 —— 它们不是千分位, 擦掉会把 '1,2' 搓成 '12'。
+        # 只认半角 ',': 全角 '，' 在中文里是断句标点, '花了5，100块没了' 会被悄悄粘成
+        # 5100, 而全角写千分位本就罕见, 认它风险远大于收益。
+        grouped = ((self.DIGIT | self.DIGIT**2 | self.DIGIT**3)
+                   + (accep(",") + self.DIGIT**3).plus)
+        number |= (grouped @ self.build_rule(delete(","))) @ number
         number = sign.ques + number + (dot + digits.plus).ques
         number @= self.build_rule(cross("二百", "两百") | cross("二千", "两千") | cross("二万", "两万") | cross("二亿", "两亿"),
                                   "[BOS]").optimize()

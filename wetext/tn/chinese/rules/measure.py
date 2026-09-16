@@ -37,19 +37,29 @@ class Measure(Processor):
         units_zh |= accep("分之")
         units = add_weight((cross("k", "千") | cross("w", "万")), 0.1).ques + (units_en | units_zh)
         rmspace = delete(" ").ques
-        to = cross("-", "到") | cross("~", "到") | accep("到")
+        # '~' 的全角形态 '～'(U+FF5E)、'〜'(U+301C) 一并认, 否则区间号漏进 TTS。
+        to = (cross("-", "到") | cross("~", "到") | cross("～", "到")
+              | cross("〜", "到") | accep("到"))
 
         number = self.cardinal.number
-        strip_comma = self.build_rule(delete(",") | delete("，"), self.DIGIT, self.DIGIT)
-        number = strip_comma @ number
+        # 千分位逗号已由 cardinal.number 自己处理(只认半角、且每组必须恰好 3 位),
+        # 这里不再单独剥 —— 原先那份 strip_comma 认全角 '，' 又不校验分组位数,
+        # '花了5，100块没了' 会被粘成"五千一百"。
         number @= self.build_rule(cross("二", "两"), "[BOS]", "[EOS]")
         # 1-11个，1个-11个
         prefix = number + (rmspace + units).ques + to
-        measure = prefix.ques + number + rmspace + units
+        # 序数前缀"第"吸进 measure: 不吸的话 tagger 把 '第2页' 切成 char{第}+measure{2页},
+        # measure 内部看不见"第", 上面那条 二->两 就把它读成"第两页"。吸进来之后"第"
+        # 成了 measure 的一部分, 下面按前缀把"两"改回"二"。量词是开放集合(页个册集期…)
+        # 枚举不完, 而"第"是封闭单字前缀且"第两X"永不成立, 故judge按前缀而非量词。
+        ordinal = accep("第").ques
+        measure = ordinal + prefix.ques + number + rmspace + units
 
         for unit in ["两", "月", "号", "分之"]:
             measure @= self.build_rule(cross("两" + unit, "二" + unit), l="[BOS]")
             measure @= self.build_rule(cross("到两" + unit, "到二" + unit), r="[EOS]")
+        # "第"后面一律读"二": 现在"第"在 measure span 内, 左上下文够得着了。
+        measure @= self.build_rule(cross("两", "二"), l="第")
 
         # xxxx年, xxxx-xxxx年
         digits = self.cardinal.digits

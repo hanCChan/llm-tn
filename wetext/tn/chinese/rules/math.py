@@ -32,13 +32,22 @@ class Math(Processor):
     def build_tagger(self):
         operator = string_file(get_abs_path("chinese/data/math/operator.tsv"))
         unambiguous_operator = string_file(get_abs_path("chinese/data/math/operator_unambiguous.tsv"))
+        # 无歧义的"操作数"符号(∞ 及其正负号形式): 与 unambiguous_operator 同样直接挂在
+        # self.math 顶层, 绕开 algebraic 的 .plus —— '从-∞到∞' 里的两个 ∞ 被中文"到"隔开,
+        # 各自零运算符, 走 algebraic 会被拒掉、整串原样漏出。
+        # '-∞'/'+∞' 必须作为整条目列出并排在 '∞' 前: 走这一支时没有 sign 参与, 靠 sign
+        # 拼不出来。'3-∞' 仍由 numeric/algebraic 以更长匹配读作"三减无穷"(数学上正确)。
+        unambiguous_symbol = string_file(get_abs_path("chinese/data/math/symbol_unambiguous.tsv"))
         # "/" 在算式里当除号读作 "除以"(1/2 -> 一除以二, 顺序读无需换序)。"/" 高度歧义
         # (分数线/月日/每/比分), 但定类由上游(LLM)决定; 一旦走到 math 即按算式除号读。
         # 纯分数 '1/2' 单独出现时仍被 fraction 以更优权重抢走(读 '二分之一'); 只有当 "/"
         # 处于算式(带 =、其它运算符等 fraction 匹配不全的上下文)时才归 math, 从而修掉
         # '1/2=0.5' 被切成 '一/二等于零点五' 的破碎输出。
         slash = cross("/", "除以")
-        symbols = (cross("~", "到") | cross(":", "比") | cross("<", "小于")
+        # '~' 另有两个全角形态: '～'(U+FF5E) 与 '〜'(U+301C), 中日文文本里都常见,
+        # 不认的话 '35,410～39,000' 会把波浪号原样漏进 TTS。区间号无歧义, 直接认。
+        symbols = (cross("~", "到") | cross("～", "到") | cross("〜", "到")
+                   | cross(":", "比") | cross("<", "小于")
                    | cross(">", "大于"))
 
         # 操作数可携带单位, 复用 measure 的单位表(units_en 按表转写, units_zh 原样)。
@@ -68,7 +77,14 @@ class Math(Processor):
         # 注: sin/cos 等函数名走 prefix_op, 不占这里的额度。
         atom = letter | constant | greek
         cluster = atom | atom**2 | atom**3
-        core = (number + (delete(" ").ques + units).ques) | (number + cluster) | cluster
+        # 符号位: 数字自带(cardinal 的 sign), 但字母/函数没有 —— 不补的话 'a=-b'、
+        # 'f(-x)=-f(x)' 整条链会崩掉, 连 '=' 都落给 char 原样漏出。
+        # 定义提到 core 之前, 因为 core 的字母簇一支要用它。
+        sign = (cross("-", "负") | cross("+", "正")).ques
+        # 字母簇一支补 sign: 数字一支的正负由 cardinal.number 自带, 字母簇没有, 于是
+        # 'a^-b'、'e^-x' 读不出, 而 '10^-3'、'x^-1' 正常。根因是 caret 的指数位用的是
+        # core 而非 operand, 拿不到 operand 那一层的 sign, 所以必须补在 core 里。
+        core = ((number + (delete(" ").ques + units).ques) | (number + cluster) | (sign + cluster))
 
         # 运算符分两档:
         #   num_op  纯数字链用
@@ -102,9 +118,7 @@ class Math(Processor):
         # 右括号在后扩展符之前 —— '(a+b)²' 的写法是 ')' 在 '²' 前。
         open_grp = (delete("(") | delete("|")).ques
         close_grp = (delete(")") | delete("|")).ques
-        # 符号位: 数字自带(cardinal 的 sign), 但字母/函数没有 —— 不补的话 'a=-b'、
-        # 'f(-x)=-f(x)' 整条链会崩掉, 连 '=' 都落给 char 原样漏出。
-        sign = (cross("-", "负") | cross("+", "正")).ques
+        # sign 已在 core 之前定义(字母簇一支要用), 此处直接复用。
         operand = (open_grp + sign + prefix_op.star + open_grp + (call | core)
                    + close_grp + suffix_op + close_grp)
         # 纯数字链: 操作数只能是"数字(可带单位)", 运算符含 "/"。这是本规则的原有行为,
@@ -120,6 +134,13 @@ class Math(Processor):
         # 和 'cm³' 两个单操作数, 把 ³ 读成"的立方"。裸数字的 0 运算符退化路径由上面的
         # numeric 链(.star)保留, 两者互不影响。
         algebraic = operand + (op + operand).plus
+        # 含 '^' 的单项: 'x^2'、'2^10'、'e^x' 孤立出现时顶层没有运算符, 走 algebraic 的
+        # .plus 会被拒掉, 整串原样漏出('x^2' -> 'x^二')。判据是 '^' 这个字符本身 ——
+        # 它在单位、型号、缩写里都不出现, 所以"带 ^ 的单项"没有 'cm³' 那类单位歧义,
+        # 可以安全地零运算符成链。注意只放行 caret 形式: ²³ 上标单项仍归 .plus 管,
+        # 否则 'cm³' 会被读成 'cm的立方'。
+        power_term = (open_grp + sign + prefix_op.star + open_grp + (call | core)
+           + close_grp + caret + close_grp)
         # cluster 限长 3 只挡住"整词匹配", 挡不住 tagger 从词中间下刀 —— 'COVID-19' 会被
         # 切成 char{C} char{O} math{VID-19} 读出"COVID减十九", 'e-mail' 切成 math{e-mai}
         # char{l}。判据是 '-' 紧邻的字母游程长度: 4 个以上字母是英文词/型号而非变量簇,
@@ -130,7 +151,7 @@ class Math(Processor):
         hyphen_word = add_weight((long_word + accep("-")) | (accep("-") + long_word),
                                  self.MIN_NEG_WEIGHT)
 
-        self.math = (numeric | algebraic | unambiguous_operator | hyphen_word).optimize()
+        self.math = (numeric | algebraic | power_term | unambiguous_operator | unambiguous_symbol | hyphen_word).optimize()
         self.tagger = self.add_tokens(self.tag_field("value", self.math))
 
     def build_verbalizer(self):
