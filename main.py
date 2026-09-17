@@ -75,7 +75,8 @@ def main():
             "所以1.857 ＞ 1.85 > 1.8（57循环）",
             "国庆假期覆盖了01年04月~10年04月，是旅游的黄金周。",
             "独立公式示例： $$ \\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi} $$",
-            "矩阵示例： $$ A = \\begin{pmatrix} 1 & 0 \\ 0 & 1 \\end{pmatrix} $$" 
+            "矩阵示例： $$ A = \\begin{pmatrix} 1 & 0 \\ 0 & 1 \\end{pmatrix} $$",
+            "测试第2页" 
         ]
     tn = TN()
     for s in srcs:

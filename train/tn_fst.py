@@ -17,6 +17,7 @@ LLM 把句子标成 [(span, "CLASS:ctx")...]。TNReader 按 span 的 CLASS 路�
     r.apply("会议3月5日下午2点开", [["3月5日", "DATE:date"], ["下午2点", "TIME:time"]])
 """
 import os
+import re
 import sys
 
 _WETEXT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "wetext"))
@@ -109,6 +110,30 @@ class TNReader:
             last_end = end
         return merged
 
+    @staticmethod
+    def _post(src, out):
+        """后处理: 原文是序数词 "第2" 而读成 "第两" 时纠正为 "第二"。
+
+        "2" 单独作量词前缀时读"两"(如 "2个"->"两个"), 但序数 "第2" 必须读"第二"。
+        两条限制避免误伤:
+          1. 正则 "第2(?!\\d)" —— 原文 "2" 后不接数字, 排除 "第2000"->"第两千" 这类;
+          2. "第两" 在 out 的下标须与 "第2" 在 src 的下标相同 —— 否则该 "第两"
+             不是由这个 "第2" 转来的(如原文自带的 "第两百"), 不应改动。
+        下标对齐仅在前文等长时成立; 对不上就跳过(漏修而非误改)。纯保险步骤,
+        任何意外一律返回原 out。
+        """
+        try:
+            if not src or not out or "第两" not in out:
+                return out
+            chars = list(out)
+            for m in re.finditer(r"第2(?!\d)", src):
+                i = m.start()
+                if 0 <= i + 1 < len(chars) and out[i:i + 2] == "第两":
+                    chars[i + 1] = "二"
+            return "".join(chars)
+        except Exception:
+            return out
+
     def apply(self, src, edits=None, fallback=True):
         """按 LLM 标注逐 span 路由读音; edits 为空时整句走默认 normalizer。
 
@@ -140,7 +165,7 @@ class TNReader:
 
         staged = "".join(out)
         try:
-            return self.default.normalize(staged)
+            return self._post(src, self.default.normalize(staged))
         except Exception:
             return staged
 
