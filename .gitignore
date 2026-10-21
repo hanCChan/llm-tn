@@ -21,3 +21,6 @@ __pycache__/
 
 .claude/
 .vscode/
+# NAR 训练权重与评测输出
+runs/
+test_output/
