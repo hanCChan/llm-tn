@@ -1,0 +1,178 @@
+{"src": "今天的历史课很有趣！我忽然想起来，1011年，距今已有一千零一十年了。", "meta": {"source": "cases_num"}, "edits": [["1011年", "DATE:date"]], "gold_spoken": "今天的历史课很有趣！我忽然想起来，一零一一年，距今已有一千零一十年了。"}
+{"src": "那是一段需要被每一位中国人铭记的历史：1997年，香港回归祖国！这是中华民族历史上的重要时刻。", "meta": {"source": "cases_num"}, "edits": [["1997年", "DATE:date"]], "gold_spoken": "那是一段需要被每一位中国人铭记的历史：一九九七年，香港回归祖国！这是中华民族历史上的重要时刻。"}
+{"src": "我们计划在2024年推出全新的产品线，以满足市场需求。", "meta": {"source": "cases_num"}, "edits": [["2024年", "DATE:date"]], "gold_spoken": "我们计划在二零二四年推出全新的产品线，以满足市场需求。"}
+{"src": "随着市场的不断变化，在98年4月，公司进行了一次重大的战略调整。", "meta": {"source": "cases_num"}, "edits": [["98年4月", "DATE:date"]], "gold_spoken": "随着市场的不断变化，在九八年四月，公司进行了一次重大的战略调整。"}
+{"src": "改革开放以来，人们的生活充满了机遇！1998年04月，他们开始了第一次创业尝试。", "meta": {"source": "cases_num"}, "edits": [["1998年04月", "DATE:date"]], "gold_spoken": "改革开放以来，人们的生活充满了机遇！一九九八年四月，他们开始了第一次创业尝试。"}
+{"src": "奥运会开幕式是最值得期待的，其中，2008年8月，北京奥运会的开幕是我尤为震撼！", "meta": {"source": "cases_num"}, "edits": [["2008年8月", "DATE:date"]], "gold_spoken": "奥运会开幕式是最值得期待的，其中，二零零八年八月，北京奥运会的开幕是我尤为震撼！"}
+{"src": "那年夏天，也就是2008年8月，我们迎来了一场盛事。", "meta": {"source": "cases_num"}, "edits": [["2008年8月", "DATE:date"]], "gold_spoken": "那年夏天，也就是二零零八年八月，我们迎来了一场盛事。"}
+{"src": "在一个特殊的日子里，我在1998年04月23日，开始了一段新旅程。", "meta": {"source": "cases_num"}, "edits": [["1998年04月23日", "DATE:date"]], "gold_spoken": "在一个特殊的日子里，我在一九九八年四月二十三日，开始了一段新旅程。"}
+{"src": "那是一个万众瞩目的日子！说到08年8月8号，全城沉浸在节日气氛中。", "meta": {"source": "cases_num"}, "edits": [["08年8月8号", "DATE:date"]], "gold_spoken": "那是一个万众瞩目的日子！说到零八年八月八号，全城沉浸在节日气氛中。"}
+{"src": "我想每一位中国人都会记得这个日子，2008年08月08号，对于很多人，是永生难忘的回忆。", "meta": {"source": "cases_num"}, "edits": [["2008年08月08号", "DATE:date"]], "gold_spoken": "我想每一位中国人都会记得这个日子，二零零八年八月八号，对于很多人，是永生难忘的回忆。"}
+{"src": "令人难以忘怀，98年4月23日，我们共同庆祝了一个里程碑。", "meta": {"source": "cases_num"}, "edits": [["98年4月23日", "DATE:date"]], "gold_spoken": "令人难以忘怀，九八年四月二十三日，我们共同庆祝了一个里程碑。"}
+{"src": "那一天，已深深印在了我的脑海里！1998年04月23日，总能唤起那些激动人心的场景。", "meta": {"source": "cases_num"}, "edits": [["1998年04月23日", "DATE:date"]], "gold_spoken": "那一天，已深深印在了我的脑海里！一九九八年四月二十三日，总能唤起那些激动人心的场景。"}
+{"src": "没有谁能够忘记吧！08年8月8号，天空中烟花绽放，庆祝着那个特别的时刻。", "meta": {"source": "cases_num"}, "edits": [["08年8月8号", "DATE:date"]], "gold_spoken": "没有谁能够忘记吧！零八年八月八号，天空中烟花绽放，庆祝着那个特别的时刻。"}
+{"src": "那时候，全世界的人们都翘首以盼，期待着2008年08月08号这一天的到来！", "meta": {"source": "cases_num"}, "edits": [["2008年08月08号", "DATE:date"]], "gold_spoken": "那时候，全世界的人们都翘首以盼，期待着二零零八年八月八号这一天的到来！"}
+{"src": "春天到了，漫山遍野的花儿；我们在3月20日这一天计划出去春游。", "meta": {"source": "cases_num"}, "edits": [["3月20日", "DATE:date"]], "gold_spoken": "春天到了，漫山遍野的花；我们在三月二十日这一天计划出去春游。"}
+{"src": "奶奶又老了一岁！08月07号这一天，是她老人家80岁大寿！", "meta": {"source": "cases_num"}, "edits": [["08月07号", "DATE:date"], ["80岁", "MEASURE:measure"]], "gold_spoken": "奶奶又老了一岁！八月七号这一天，是她老人家八十岁大寿！"}
+{"src": "在过去的岁月里有一个月份不同寻常，2018/08，不少计划悄然启动！", "meta": {"source": "cases_num"}, "edits": [["2018/08", "DATE:date"]], "gold_spoken": "在过去的岁月里有一个月份不同寻常，二零一八年八月，不少计划悄然启动！"}
+{"src": "让我们牢牢记住这个时候，2018-08，创意不断涌现。", "meta": {"source": "cases_num"}, "edits": [["2018-08", "DATE:date"]], "gold_spoken": "让我们牢牢记住这个时候，二零一八年八月，创意不断涌现。"}
+{"src": "特定说来，2018.08，是许多人铭记的日期。", "meta": {"source": "cases_num"}, "edits": [["2018.08", "DATE:date"]], "gold_spoken": "特定说来，二零一八年八月，是许多人铭记的日期。"}
+{"src": "在历史长河中，有许多纪念日，如2018/08/08，是让每个人都能深刻铭记的。", "meta": {"source": "cases_num"}, "edits": [["2018/08/08", "DATE:date"]], "gold_spoken": "在历史长河中，有许多纪念日，如二零一八年八月八日，是让每个人都能深刻铭记的。"}
+{"src": "还记得吗？2018-8-8，那一天，梦想与现实交汇。", "meta": {"source": "cases_num"}, "edits": [["2018-8-8", "DATE:date"]], "gold_spoken": "还记得吗？二零一八年八月八日，那一天，梦想与现实交汇。"}
+{"src": "不知你们是否还有印象，2018.08.08，我们忙得不可开交。", "meta": {"source": "cases_num"}, "edits": [["2018.08.08", "DATE:date"]], "gold_spoken": "不知你们是否还有印象，二零一八年八月八日，我们忙得不可开交。"}
+{"src": "岁月不饶人，从2004年09月01日-2008年06月08号间，时光飞逝。", "meta": {"source": "cases_num"}, "edits": [["2004年09月01日-2008年06月08号", "DATE:date"]], "gold_spoken": "岁月不饶人，从二零零四年九月一日到二零零八年六月八号间，时光飞逝。"}
+{"src": "根据新闻网的最新消息显示，2004年09月01号-2008年06月08号是学习与成长的季节。", "meta": {"source": "cases_num"}, "edits": [["2004年09月01号-2008年06月08号", "DATE:date"]], "gold_spoken": "根据新闻网的最新消息显示，二零零四年九月一号到二零零八年六月八号是学习与成长的季节。"}
+{"src": "时光荏苒，无论说是2001年04月~2010年04月，都是享受自然的好时机。", "meta": {"source": "cases_num"}, "edits": [["2001年04月~2010年04月", "DATE:date"]], "gold_spoken": "时光荏苒，无论说是二零零一年四月到二零一零年四月，都是享受自然的好时机。"}
+{"src": "假期还不容易到来，从10月1日~10月7日，每一天都值得珍惜。", "meta": {"source": "cases_num"}, "edits": [["10月1日~10月7日", "DATE:date"]], "gold_spoken": "假期还不容易到来，从十月一日到十月七日，每一天都值得珍惜。"}
+{"src": "真的很开心！10月01号~10月07日，项目圆满结束。", "meta": {"source": "cases_num"}, "edits": [["10月01号~10月07日", "DATE:date"]], "gold_spoken": "真的很开心！十月一号到十月七日，项目圆满结束。"}
+{"src": "从年初到深秋，横跨2018/03/03~2019/01/01，项目步步推进。", "meta": {"source": "cases_num"}, "edits": [["2018/03/03~2019/01/01", "DATE:date"]], "gold_spoken": "从年初到深秋，横跨二零一八年三月三日到二零一九年一月一日，项目步步推进。"}
+{"src": "我总是莫名其妙地思考，1997.9.9~1998.9.9，那时候的人们过着怎样的生活呢？", "meta": {"source": "cases_num"}, "edits": [["1997.9.9~1998.9.9", "DATE:date"]], "gold_spoken": "我总是莫名其妙地思考，一九九七年九月九日到一九九八年九月九日，那时候的人们过着怎样的生活呢？"}
+{"src": "精确到某一天，10/20~10/31，生活有了新起点。", "meta": {"source": "cases_num"}, "edits": [["10/20~10/31", "DATE:date"]], "gold_spoken": "精确到某一天，十月二十日到十月三十一日，生活有了新起点。"}
+{"src": "我会牢记那一天，10/20/2018，有太多美好的回忆了！", "meta": {"source": "cases_num"}, "edits": [["10/20/2018", "DATE:date"]], "gold_spoken": "我会牢记那一天，二零一八年十月二十日，有太多美好的回忆了！"}
+{"src": "我们准时12:00在餐厅见面，一起享用午餐。", "meta": {"source": "cases_num"}, "edits": [["12:00", "TIME:time"]], "gold_spoken": "我们准时十二点在餐厅见面，一起享用午餐。"}
+{"src": "等待是如此的漫长且煎熬，1月~10月，她始终在这里等待着他的出现。", "meta": {"source": "cases_num"}, "edits": [["1月~10月", "DATE:date"]], "gold_spoken": "等待是如此的漫长且煎熬，一月到十月，她始终在这里等待着他的出现。"}
+{"src": "电影在10:20:30开始，请准时到达电影院。", "meta": {"source": "cases_num"}, "edits": [["10:20:30", "TIME:time"]], "gold_spoken": "电影在十点二十分三十秒开始，请准时到达电影院。"}
+{"src": "我每天早上09:18:14都会收到一条工作日报的提醒。", "meta": {"source": "cases_num"}, "edits": [["09:18:14", "TIME:time"]], "gold_spoken": "我每天早上九点十八分十四秒都会收到一条工作日报的提醒。"}
+{"src": "你的打卡时间为10:02:14，请留意上班时间", "meta": {"source": "cases_num"}, "edits": [["10:02:14", "TIME:time"]], "gold_spoken": "你的打卡时间为十点零二分十四秒，请留意上班时间"}
+{"src": "你在09:18:04有一个未接来电。", "meta": {"source": "cases_num"}, "edits": [["09:18:04", "TIME:time"]], "gold_spoken": "你在九点十八分四秒有一个未接来电。"}
+{"src": "每天11:00~12:00是部门团队开例会的时间。", "meta": {"source": "cases_num"}, "edits": [["11:00~12:00", "TIME:time"]], "gold_spoken": "每天十一点到十二点是部门团队开例会的时间。"}
+{"src": "商店的营业时间是09:00-14:00，请在这个时间段内来访。", "meta": {"source": "cases_num"}, "edits": [["09:00-14:00", "TIME:time"]], "gold_spoken": "商店的营业时间是九点到十四点，请在这个时间段内来访。"}
+{"src": "我每天早上都会在11:00~11:30这个时间段进行健身锻炼。", "meta": {"source": "cases_num"}, "edits": [["11:00~11:30", "TIME:time"]], "gold_spoken": "我每天早上都会在十一点到十一点三十分这个时间段进行健身锻炼。"}
+{"src": "会议预计时长11:00-12:18，请安排好时间。", "meta": {"source": "cases_num"}, "edits": [["11:00-12:18", "TIME:time"]], "gold_spoken": "会议预计时长十一点到十二点十八分，请安排好时间。"}
+{"src": "我习惯在10:30~11:00之间处理电子邮件和回复消息。", "meta": {"source": "cases_num"}, "edits": [["10:30~11:00", "TIME:time"]], "gold_spoken": "我习惯在十点三十分到十一点之间处理电子邮件和回复消息。"}
+{"src": "每天，我会在09:28-10:00之间正式开始工作。", "meta": {"source": "cases_num"}, "edits": [["09:28-10:00", "TIME:time"]], "gold_spoken": "每天，我会在九点二十八分到十点之间正式开始工作。"}
+{"src": "每天早上，在10:20~11:20跑步，感觉非常棒。", "meta": {"source": "cases_num"}, "edits": [["10:20~11:20", "TIME:time"]], "gold_spoken": "每天早上，在十点二十分到十一点二十分跑步，感觉非常棒。"}
+{"src": "我每天06:00~08:00起床，然后开始晨练。", "meta": {"source": "cases_num"}, "edits": [["06:00~08:00", "TIME:time"]], "gold_spoken": "我每天六点到八点起床，然后开始晨练。"}
+{"src": "我每天5:00am就起床，开始新的一天。", "meta": {"source": "cases_num"}, "edits": [["5:00am", "TIME:time"]], "gold_spoken": "我每天上午五点就起床，开始新的一天。"}
+{"src": "我计划每天5:30am去晨跑，锻炼身体。", "meta": {"source": "cases_num"}, "edits": [["5:30am", "TIME:time"]], "gold_spoken": "我计划每天上午五点三十分去晨跑，锻炼身体。"}
+{"src": "我每天5:20:12am会收到一条天气预报的推送消息。", "meta": {"source": "cases_num"}, "edits": [["5:20:12am", "TIME:time"]], "gold_spoken": "我每天上午五点二十分十二秒会收到一条天气预报的推送消息。"}
+{"src": "我每天早上7:00am准时吃早餐，保持健康的生活习惯。", "meta": {"source": "cases_num"}, "edits": [["7:00am", "TIME:time"]], "gold_spoken": "我每天早上七点准时吃早餐，保持健康的生活习惯。"}
+{"src": "明天7:30AM有个重要的面试，我得早点起床准备。", "meta": {"source": "cases_num"}, "edits": [["7:30AM", "TIME:time"]], "gold_spoken": "明天上午七点三十分有个重要的面试，我得早点起床准备。"}
+{"src": "我每天7:20:12a.m.都会听一段英语听力，提高我的语言能力。", "meta": {"source": "cases_num"}, "edits": [["7:20:12a.m.", "TIME:time"]], "gold_spoken": "我每天上午七点二十分十二秒都会听一段英语听力，提高我的语言能力。"}
+{"src": "每天07:08:12A.M.，我都会提醒自己要保持积极的心态开始新的一天。", "meta": {"source": "cases_num"}, "edits": [["07:08:12A.M.", "TIME:time"]], "gold_spoken": "每天上午七点零八分十二秒，我都会提醒自己要保持积极的心态开始新的一天。"}
+{"src": "我每天5:00pm下班，然后回家休息。", "meta": {"source": "cases_num"}, "edits": [["5:00pm", "TIME:time"]], "gold_spoken": "我每天下午五点下班，然后回家休息。"}
+{"src": "我喜欢在5:30PM喝杯茶，放松一下心情。", "meta": {"source": "cases_num"}, "edits": [["5:30PM", "TIME:time"]], "gold_spoken": "我喜欢在下午五点三十分喝杯茶，放松一下心情。"}
+{"src": "每天5:20:12p.m.，我都会和同事们一起去打篮球，锻炼身体。", "meta": {"source": "cases_num"}, "edits": [["5:20:12p.m.", "TIME:time"]], "gold_spoken": "每天下午五点二十分十二秒，我都会和同事们一起去打篮球，锻炼身体。"}
+{"src": "我每天05:09:12P.M.都会开始准备晚餐，确保家人回来有热腾腾的饭菜吃。", "meta": {"source": "cases_num"}, "edits": [["05:09:12P.M.", "TIME:time"]], "gold_spoken": "我每天下午五点零九分十二秒都会开始准备晚餐，确保家人回来有热腾腾的饭菜吃。"}
+{"src": "我每天晚上9:00pm都会看一集喜欢的电视剧，放松心情。", "meta": {"source": "cases_num"}, "edits": [["9:00pm", "TIME:time"]], "gold_spoken": "我每天晚上九点都会看一集喜欢的电视剧，放松心情。"}
+{"src": "我计划每天晚上9:30pm开始阅读，充实自己的大脑。", "meta": {"source": "cases_num"}, "edits": [["9:30pm", "TIME:time"]], "gold_spoken": "我计划每天晚上九点三十分开始阅读，充实自己的大脑。"}
+{"src": "我每天晚上9:20:12PM都会跟家人视频通话，分享彼此的生活。", "meta": {"source": "cases_num"}, "edits": [["9:20:12PM", "TIME:time"]], "gold_spoken": "我每天晚上九点二十分十二秒都会跟家人视频通话，分享彼此的生活。"}
+{"src": "今天的会议将在2:45:15pm开始。", "meta": {"source": "cases_num"}, "edits": [["2:45:15pm", "TIME:time"]], "gold_spoken": "今天的会议将在下午两点四十五分十五秒开始。"}
+{"src": "每天9:02:12P.M.，我都会记录下当天发生的事情，作为宝贵的回忆。", "meta": {"source": "cases_num"}, "edits": [["9:02:12P.M.", "TIME:time"]], "gold_spoken": "每天下午九点零二分十二秒，我都会记录下当天发生的事情，作为宝贵的回忆。"}
+{"src": "我每天12:00pm都会吃午饭，补充能量。", "meta": {"source": "cases_num"}, "edits": [["12:00pm", "TIME:time"]], "gold_spoken": "我每天下午十二点都会吃午饭，补充能量。"}
+{"src": "我喜欢在12:30p.m.散步，享受午后的阳光。", "meta": {"source": "cases_num"}, "edits": [["12:30p.m.", "TIME:time"]], "gold_spoken": "我喜欢在下午十二点三十分散步，享受午后的阳光。"}
+{"src": "我每天12:20:12PM都会与同事们交流工作心得，共同进步。", "meta": {"source": "cases_num"}, "edits": [["12:20:12PM", "TIME:time"]], "gold_spoken": "我每天下午十二点二十分十二秒都会与同事们交流工作心得，共同进步。"}
+{"src": "这件衣服要1487元。", "meta": {"source": "cases_num"}, "edits": [["1487元", "MONEY:money"]], "gold_spoken": "这件衣服要一千四百八十七元。"}
+{"src": "他上个月的银行账户余额为-1487元，这意味着他已经超支了。", "meta": {"source": "cases_num"}, "edits": [["-1487元", "MONEY:money"]], "gold_spoken": "他上个月的银行账户余额为负一千四百八十七元，这意味着他已经超支了。"}
+{"src": "他存了10,500元作为旅行基金，准备开启一段长途旅行。", "meta": {"source": "cases_num"}, "edits": [["10,500元", "MONEY:money"]], "gold_spoken": "他存了一万零五百元作为旅行基金，准备开启一段长途旅行。"}
+{"src": "由于市场波动，他的投资账户余额为-10,500元。", "meta": {"source": "cases_num"}, "edits": [["-10,500元", "MONEY:money"]], "gold_spoken": "由于市场波动，他的投资账户余额为负一万零五百元。"}
+{"src": "这件商品的售价为9.00元，非常实惠。", "meta": {"source": "cases_num"}, "edits": [["9.00元", "MONEY:money"]], "gold_spoken": "这件商品的售价为九点零零元，非常实惠。"}
+{"src": "他的信用卡额度为-110.00元，这让他非常懊恼。", "meta": {"source": "cases_num"}, "edits": [["-110.00元", "MONEY:money"]], "gold_spoken": "他的信用卡额度为负一百一十点零零元，这让他非常懊恼。"}
+{"src": "昨天的股市交易中，某股票的价格收盘于88.090元。", "meta": {"source": "cases_num"}, "edits": [["88.090元", "MONEY:money"]], "gold_spoken": "昨天的股市交易中，某股票的价格收盘于八十八点零九零元。"}
+{"src": "科学家在实验室中精确测量出某种物质的密度为-88.001g/cm³，这一发现引起了学术界的广泛关注。", "meta": {"source": "cases_num"}, "edits": [["-88.001g/cm³", "MEASURE:measure"]], "gold_spoken": "科学家在实验室中精确测量出某种物质的密度为负八十八点零零一g/cm³，这一发现引起了学术界的广泛关注。"}
+{"src": "他的电话号码356210985，你可以通过这个号码联系到他。", "meta": {"source": "cases_num"}, "edits": [["356210985", "PHONE:phone"]], "gold_spoken": "他的电话号码三五六二幺零九八五，你可以通过这个号码联系到他。"}
+{"src": "如果您需要咨询，请拨打我们的客服电话：5605560。", "meta": {"source": "cases_num"}, "edits": [["5605560", "PHONE:phone"]], "gold_spoken": "如果您需要咨询，请拨打我们的客服电话：五六零五五六零。"}
+{"src": "请记住这个紧急联系电话：5605560，在需要时可以随时拨打。", "meta": {"source": "cases_num"}, "edits": [["5605560", "PHONE:phone"]], "gold_spoken": "请记住这个紧急联系电话：五六零五五六零，在需要时可以随时拨打。"}
+{"src": "他的电话号码好像是560-5560，你可以。", "meta": {"source": "cases_num"}, "edits": [["560-5560", "PHONE:phone"]], "gold_spoken": "他的电话号码好像是五六零五五六零，你可以。"}
+{"src": "我的手机号码是55605560，随时欢迎联系我。", "meta": {"source": "cases_num"}, "edits": [["55605560", "PHONE:phone"]], "gold_spoken": "我的手机号码是五五六零五五六零，随时欢迎联系我。"}
+{"src": "他们的服务热线是55605560，你可以随时拨打咨询。", "meta": {"source": "cases_num"}, "edits": [["55605560", "PHONE:phone"]], "gold_spoken": "他们的服务热线是五五六零五五六零，你可以随时拨打咨询。"}
+{"src": "上个月电话费账单显示，我拨打了5560-5560这个号码。", "meta": {"source": "cases_num"}, "edits": [["5560-5560", "PHONE:phone"]], "gold_spoken": "上个月电话费账单显示，我拨打了五五六零五五六零这个号码。"}
+{"src": "公司的内部短号是55605560-105，方便员工之间快速联系。", "meta": {"source": "cases_num"}, "edits": [["55605560-105", "PHONE:phone"]], "gold_spoken": "公司的内部短号是五五六零五五六零幺零五，方便员工之间快速联系。"}
+{"src": "如果你想转接销售部门，请拨打55605560转105。", "meta": {"source": "cases_num"}, "edits": [["55605560", "PHONE:phone"], ["105", "PHONE:phone"]], "gold_spoken": "如果你想转接销售部门，请拨打五五六零五五六零转幺零五。"}
+{"src": "请拨打55605560分机105联系人事部门，他们会为你提供帮助。", "meta": {"source": "cases_num"}, "edits": [["55605560", "PHONE:phone"], ["105", "PHONE:phone"]], "gold_spoken": "请拨打五五六零五五六零分机幺零五联系人事部门，他们会为你提供帮助。"}
+{"src": "公司的电话号码是55605560分机号105，需要时可以直接拨打。", "meta": {"source": "cases_num"}, "edits": [["55605560", "PHONE:phone"], ["105", "PHONE:phone"]], "gold_spoken": "公司的电话号码是五五六零五五六零分机号幺零五，需要时可以直接拨打。"}
+{"src": "在北京的总部电话是01055605560，你可以直接拨打这个号码。", "meta": {"source": "cases_num"}, "edits": [["01055605560", "PHONE:phone"]], "gold_spoken": "在北京的总部电话是零幺零五五六零五五六零，你可以直接拨打这个号码。"}
+{"src": "如果你想联系北京办事处，请拨打01055605560。", "meta": {"source": "cases_num"}, "edits": [["01055605560", "PHONE:phone"]], "gold_spoken": "如果你想联系北京办事处，请拨打零幺零五五六零五五六零。"}
+{"src": "你可以通过010-5560-5560这个号码联系我们的客户服务团队。", "meta": {"source": "cases_num"}, "edits": [["010-5560-5560", "PHONE:phone"]], "gold_spoken": "你可以通过零幺零五五六零五五六零这个号码联系我们的客户服务团队。"}
+{"src": "请记录这个重要电话号码：(010)55605560，以备不时之需。", "meta": {"source": "cases_num"}, "edits": [["(010)55605560", "PHONE:phone"]], "gold_spoken": "请记录这个重要电话号码：零幺零五五六零五五六零，以备不时之需。"}
+{"src": "邢台分公司的联系电话是031955605560，欢迎致电咨询。", "meta": {"source": "cases_num"}, "edits": [["031955605560", "PHONE:phone"]], "gold_spoken": "邢台分公司的联系电话是零三幺九五五六零五五六零，欢迎致电咨询。"}
+{"src": "邢台分公司的服务热线是0319-55605560，我们将竭诚为您解答问题。", "meta": {"source": "cases_num"}, "edits": [["0319-55605560", "PHONE:phone"]], "gold_spoken": "邢台分公司的服务热线是零三幺九五五六零五五六零，我们将竭诚为您解答问题。"}
+{"src": "如果你想咨询详细信息，请拨打北京总部的电话01033878528-1054。", "meta": {"source": "cases_num"}, "edits": [["01033878528-1054", "PHONE:phone"]], "gold_spoken": "如果你想咨询详细信息，请拨打北京总部的电话零幺零三三八七八五二八幺零五四。"}
+{"src": "客服人员小王的分机号是010-33878528-1054，你可以直接联系他。", "meta": {"source": "cases_num"}, "edits": [["010-33878528-1054", "PHONE:phone"]], "gold_spoken": "客服人员小王的分机号是零幺零三三八七八五二八幺零五四，你可以直接联系他。"}
+{"src": "拨打(010)33878528-1054可以联系到我们的市场部门。", "meta": {"source": "cases_num"}, "edits": [["(010)33878528-1054", "PHONE:phone"]], "gold_spoken": "拨打零幺零三三八七八五二八幺零五四可以联系到我们的市场部门。"}
+{"src": "如果你想转接财务部门，请拨(010)33878528转1054。", "meta": {"source": "cases_num"}, "edits": [["(010)33878528", "PHONE:phone"], ["1054", "PHONE:phone"]], "gold_spoken": "如果你想转接财务部门，请拨零幺零三三八七八五二八转幺零五四。"}
+{"src": "国际长途电话前缀加上中国的国家码是(010)33878528分机1054，方便海外客户联系我们。", "meta": {"source": "cases_num"}, "edits": [["(010)33878528", "PHONE:phone"], ["1054", "PHONE:phone"]], "gold_spoken": "国际长途电话前缀加上中国的国家码是零幺零三三八七八五二八分机幺零五四，方便海外客户联系我们。"}
+{"src": "我们在上海办事处的联系电话是(86)10-33878528分机号1054，欢迎来电咨询。", "meta": {"source": "cases_num"}, "edits": [["(86)10-33878528", "PHONE:phone"], ["1054", "PHONE:phone"]], "gold_spoken": "我们在上海办事处的联系电话是八六幺零三三八七八五二八分机号幺零五四，欢迎来电咨询。"}
+{"src": "海外客户可以拨打86-010-33878528联系我们的北京总部。", "meta": {"source": "cases_num"}, "edits": [["86-010-33878528", "PHONE:phone"]], "gold_spoken": "海外客户可以拨打八六零幺零三三八七八五二八联系我们的北京总部。"}
+{"src": "如果你从国外拨打，请使用国际直拨号码(86)10-33878528联系我们。", "meta": {"source": "cases_num"}, "edits": [["(86)10-33878528", "PHONE:phone"]], "gold_spoken": "如果你从国外拨打，请使用国际直拨号码八六幺零三三八七八五二八联系我们。"}
+{"src": "拨打+86-010-33878528可以联系到我们的客服中心，他们将热情为您服务。", "meta": {"source": "cases_num"}, "edits": [["+86-010-33878528", "PHONE:phone"]], "gold_spoken": "拨打八六零幺零三三八七八五二八可以联系到我们的客服中心，他们将热情为您服务。"}
+{"src": "上海分公司的销售部门联系电话是0086-10-33878528，请在工作时间内拨打。", "meta": {"source": "cases_num"}, "edits": [["0086-10-33878528", "PHONE:phone"]], "gold_spoken": "上海分公司的销售部门联系电话是零零八六幺零三三八七八五二八，请在工作时间内拨打。"}
+{"src": "如果你想咨询上海分公司的产品信息，请拨打(+86)-10-33878528。", "meta": {"source": "cases_num"}, "edits": [["(+86)-10-33878528", "PHONE:phone"]], "gold_spoken": "如果你想咨询上海分公司的产品信息，请拨打八六幺零三三八七八五二八。"}
+{"src": "拨打(86)21-33878528-1054可以与我们的技术支持团队取得联系。", "meta": {"source": "cases_num"}, "edits": [["(86)21-33878528-1054", "PHONE:phone"]], "gold_spoken": "拨打八六二幺三三八七八五二八幺零五四可以与我们的技术支持团队取得联系。"}
+{"src": "请记录上海分公司的紧急联系电话：(86)021-3387-8528-1054。", "meta": {"source": "cases_num"}, "edits": [["(86)021-3387-8528-1054", "PHONE:phone"]], "gold_spoken": "请记录上海分公司的紧急联系电话：八六零二幺三三八七八五二八幺零五四。"}
+{"src": "国际客户可以拨打(86)021-33878528转1054联系上海分公司。", "meta": {"source": "cases_num"}, "edits": [["(86)021-33878528", "PHONE:phone"], ["1054", "PHONE:phone"]], "gold_spoken": "国际客户可以拨打八六零二幺三三八七八五二八转幺零五四联系上海分公司。"}
+{"src": "我的手机号码是(86)21-3387-8528分机号1054，你可以随时联系我。", "meta": {"source": "cases_num"}, "edits": [["(86)21-3387-8528", "PHONE:phone"], ["1054", "PHONE:phone"]], "gold_spoken": "我的手机号码是八六二幺三三八七八五二八分机号幺零五四，你可以随时联系我。"}
+{"src": "你可以拨打+86-021-3387-8528分机1054这个号码找我，我随时待命。", "meta": {"source": "cases_num"}, "edits": [["+86-021-3387-8528", "PHONE:phone"], ["1054", "PHONE:phone"]], "gold_spoken": "你可以拨打八六零二幺三三八七八五二八分机幺零五四这个号码找我，我随时待命。"}
+{"src": "我的联系方式是151-8828-1075，请在工作时间内与我联系。", "meta": {"source": "cases_num"}, "edits": [["151-8828-1075", "PHONE:phone"]], "gold_spoken": "我的联系方式是幺五幺八八二八幺零七五，请在工作时间内与我联系。"}
+{"src": "海外朋友可以拨打151-882-81075联系到我。", "meta": {"source": "cases_num"}, "edits": [["151-882-81075", "PHONE:phone"]], "gold_spoken": "海外朋友可以拨打幺五幺八八二八幺零七五联系到我。"}
+{"src": "拨打151-8828-1075可以与我直接通话，方便快捷。", "meta": {"source": "cases_num"}, "edits": [["151-8828-1075", "PHONE:phone"]], "gold_spoken": "拨打幺五幺八八二八幺零七五可以与我直接通话，方便快捷。"}
+{"src": "我的国际电话号码是+86-15188281075，欢迎海外朋友致电。", "meta": {"source": "cases_num"}, "edits": [["+86-15188281075", "PHONE:phone"]], "gold_spoken": "我的国际电话号码是八六幺五幺八八二八幺零七五，欢迎海外朋友致电。"}
+{"src": "国际长途拨打方式为(+86)-151-8828-1075，这样你就可以联系到我了。", "meta": {"source": "cases_num"}, "edits": [["(+86)-151-8828-1075", "PHONE:phone"]], "gold_spoken": "国际长途拨打方式为八六幺五幺八八二八幺零七五，这样你就可以联系到我了。"}
+{"src": "如果你有需要，请拨打+8615188281075，我会第一时间帮助你", "meta": {"source": "cases_num"}, "edits": [["+8615188281075", "PHONE:phone"]], "gold_spoken": "如果你有需要，请拨打八六幺五幺八八二八幺零七五，我会第一时间帮助你"}
+{"src": "中国银行的客服电话是0086-15188281075，有任何问题可以随时咨询。", "meta": {"source": "cases_num"}, "edits": [["0086-15188281075", "PHONE:phone"]], "gold_spoken": "中国银行的客服电话是零零八六幺五幺八八二八幺零七五，有任何问题可以随时咨询。"}
+{"src": "如果你想了解更多服务信息，请拨打110联系我们的客服中心。", "meta": {"source": "cases_num"}, "edits": [["110", "PHONE:phone"]], "gold_spoken": "如果你想了解更多服务信息，请拨打幺幺零联系我们的客服中心。"}
+{"src": "免费咨询热线是95566，我们随时为您解答疑问。", "meta": {"source": "cases_num"}, "edits": [["95566", "PHONE:phone"]], "gold_spoken": "免费咨询热线是九五五六六，我们随时为您解答疑问。"}
+{"src": "短信服务号码是4008110280，发送短信即可查询相关信息。", "meta": {"source": "cases_num"}, "edits": [["4008110280", "PHONE:phone"]], "gold_spoken": "短信服务号码是四零零八幺幺零二八零，发送短信即可查询相关信息。"}
+{"src": "上海分公司的总机号码是800-810-8888，转接各部门都很方便。", "meta": {"source": "cases_num"}, "edits": [["800-810-8888", "PHONE:phone"]], "gold_spoken": "上海分公司的总机号码是八零零八幺零八八八八，转接各部门都很方便。"}
+{"src": "他现在不在这，如果你要找他，请拨打1253013520638377，或许能找到他！", "meta": {"source": "cases_num"}, "edits": [["1253013520638377", "PHONE:phone"]], "gold_spoken": "他现在不在这，如果你要找他，请拨打幺二五三零幺三五二零六三八三七七，或许能找到他！"}
+{"src": "如遇产品问题，请拨打(86)(21)8832-80976-0907，我们会第一时间处理你的问题！", "meta": {"source": "cases_num"}, "edits": [["(86)(21)8832-80976-0907", "PHONE:phone"]], "gold_spoken": "如遇产品问题，请拨打八六二幺八八三二八零九七六零九零七，我们会第一时间处理你的问题！"}
+{"src": "这家位于深南大道1000号103-3的餐厅，以其独特的美食吸引了众多食客前来品尝。", "meta": {"source": "cases_num"}, "edits": [["1000号103-3", "ADDRESS:address"]], "gold_spoken": "这家位于深南大道一千号一零三杠三的餐厅，以其独特的美食吸引了众多食客前来品尝。"}
+{"src": "我昨天去了高新中四道377弄1137-1128号的朋友家，我们一起度过了一个愉快的夜晚。", "meta": {"source": "cases_num"}, "edits": [["377弄1137-1128号", "ADDRESS:address"]], "gold_spoken": "我昨天去了高新中四道三百七十七弄一一三七杠一一二八号的朋友家，我们一起度过了一个愉快的夜晚。"}
+{"src": "根据住户反映，他们现在住的华润城六期3-1-3805绿化环境非常好，居住舒适度高。", "meta": {"source": "cases_num"}, "edits": [["3-1-3805", "ADDRESS:address"]], "gold_spoken": "根据住户反映，他们现在住的华润城六期三杠一杠三八零五绿化环境非常好，居住舒适度高。"}
+{"src": "今天在大族云峰大厦2幢2106室举行了一场重要的商务会议，各方代表就合作事宜进行了深入交流。", "meta": {"source": "cases_num"}, "edits": [["2幢2106室", "ADDRESS:address"]], "gold_spoken": "今天在大族云峰大厦二幢二一零六室举行了一场重要的商务会议，各方代表就合作事宜进行了深入交流。"}
+{"src": "有一家咖啡店，位置在高新中三道151弄19号，每次路过都能闻到浓郁的咖啡香味，让人忍不住想进去品尝一杯。", "meta": {"source": "cases_num"}, "edits": [["151弄19号", "ADDRESS:address"]], "gold_spoken": "有一家咖啡店，位置在高新中三道一百五十一弄十九号，每次路过都能闻到浓郁的咖啡香味，让人忍不住想进去品尝一杯。"}
+{"src": "我尝试登录名为dell3301的账户，但忘记了密码，需要重置。", "meta": {"source": "cases_num", "gold_v2": "serial_widened"}, "edits": [["dell3301", "SERIAL:serial"]], "gold_spoken": "我尝试登录名为dell三三零一的账户，但忘记了密码，需要重置。"}
+{"src": "他在游戏中的昵称是tencent_1998，这个名字很有特色，让人过目难忘。", "meta": {"source": "cases_num", "gold_v2": "serial_widened"}, "edits": [["tencent_1998", "SERIAL:serial"]], "gold_spoken": "他在游戏中的昵称是tencent_一九九八，这个名字很有特色，让人过目难忘。"}
+{"src": "我最近在尝试调优一个名为AiDemo的AI数字人，它的功能非常强大且易于使用。", "meta": {"source": "cases_num"}, "edits": [], "gold_spoken": "我最近在尝试调优一个名为AiDemo的AI数字人，它的功能非常强大且易于使用。"}
+{"src": "这本书的ISBN号是1-001-099098-1，你可以在图书馆或网上书店找到它。", "meta": {"source": "cases_num"}, "edits": [["1-001-099098-1", "SERIAL:serial"]], "gold_spoken": "这本书的ISBN号是一杠零零一杠零九九零九八杠一，你可以在图书馆或网上书店找到它。"}
+{"src": "在数据库中，我们可以使用x10b2345_u作为唯一标识符来检索这条记录。", "meta": {"source": "cases_num"}, "edits": [["x10b2345_u", "SERIAL:serial"]], "gold_spoken": "在数据库中，我们可以使用x一零b二三四五_u作为唯一标识符来检索这条记录。"}
+{"src": "我们刚刚发布了软件的新版本，版本号已更新为v1.0.1，欢迎大家下载更新。", "meta": {"source": "cases_num"}, "edits": [["v1.0.1", "VERSION:version"]], "gold_spoken": "我们刚刚发布了软件的新版本，版本号已更新为v一点零点一，欢迎大家下载更新。"}
+{"src": "这款软件的下一个版本，版本号2.0，预计将包含更多新功能。", "meta": {"source": "cases_num"}, "edits": [["2.0", "VERSION:version"]], "gold_spoken": "这款软件的下一个版本，版本号二点零，预计将包含更多新功能。"}
+{"src": "那辆车的车牌号是苏MMA000，交警已经记录下了这个信息。", "meta": {"source": "cases_num", "gold_v2": "serial_widened"}, "edits": [["苏MMA000", "SERIAL:serial"]], "gold_spoken": "那辆车的车牌号是苏MMA零零零，交警已经记录下了这个信息。"}
+{"src": "这家航空公司空中客车很多，其中，空中客车A330是一种宽体客机，广受航空公司欢迎。", "meta": {"source": "cases_num", "gold_v2": "serial_widened"}, "edits": [["A330", "SERIAL:serial"]], "gold_spoken": "这家航空公司空中客车很多，其中，空中客车A三三零是一种宽体客机，广受航空公司欢迎。"}
+{"src": "该公司推出了三种新型号的产品：s01、s02和s03，它们各有特点。", "meta": {"source": "cases_num", "gold_v2": "serial_widened"}, "edits": [["s01", "SERIAL:serial"], ["s02", "SERIAL:serial"], ["s03", "SERIAL:serial"]], "gold_spoken": "该公司推出了三种新型号的产品：s零一、s零二和s零三，它们各有特点。"}
+{"src": "我最喜欢的飞机就是空中客车A330，它的舒适度和飞行稳定性都非常出色。", "meta": {"source": "cases_num", "gold_v2": "serial_widened"}, "edits": [["A330", "SERIAL:serial"]], "gold_spoken": "我最喜欢的飞机就是空中客车A三三零，它的舒适度和飞行稳定性都非常出色。"}
+{"src": "一共８４人", "meta": {"source": "stress"}, "edits": [["８４人", "MEASURE:measure"]], "gold_spoken": "一共八十四人"}
+{"src": "上个月电话费账单显示，我拨打了5560-5560这个号码", "meta": {"source": "stress"}, "edits": [["5560-5560", "PHONE:phone"]], "gold_spoken": "上个月电话费账单显示，我拨打了五五六零五五六零这个号码"}
+{"src": "我每天06:00~08:00起床，然后开始晨练", "meta": {"source": "stress"}, "edits": [["06:00~08:00", "TIME:time"]], "gold_spoken": "我每天六点到八点起床，然后开始晨练"}
+{"src": "他上个月的银行账户余额为-1487元，这意味着他已经超支了", "meta": {"source": "stress"}, "edits": [["-1487元", "MONEY:money"]], "gold_spoken": "他上个月的银行账户余额为负一千四百八十七元，这意味着他已经超支了"}
+{"src": "我每天5:00am就起床，开始新的一天", "meta": {"source": "stress"}, "edits": [["5:00am", "TIME:time"]], "gold_spoken": "我每天上午五点就起床，开始新的一天"}
+{"src": "华润城六期3-1-3805", "meta": {"source": "stress"}, "edits": [["3-1-3805", "ADDRESS:address"]], "gold_spoken": "华润城六期三杠一杠三八零五"}
+{"src": "上海分公司的总机号码是800-810-8888", "meta": {"source": "stress"}, "edits": [["800-810-8888", "PHONE:phone"]], "gold_spoken": "上海分公司的总机号码是八零零八幺零八八八八"}
+{"src": "你可以拨打+86-021-3387-8528分机1054这个号码找我", "meta": {"source": "stress"}, "edits": [["+86-021-3387-8528", "PHONE:phone"], ["1054", "PHONE:phone"]], "gold_spoken": "你可以拨打八六零二幺三三八七八五二八分机幺零五四这个号码找我"}
+{"src": "请记录这个重要电话号码：(010)55605560，以备不时之需", "meta": {"source": "stress"}, "edits": [["(010)55605560", "PHONE:phone"]], "gold_spoken": "请记录这个重要电话号码：零幺零五五六零五五六零，以备不时之需"}
+{"src": "我喜欢在12:30p.m.散步，享受午后的阳光", "meta": {"source": "stress"}, "edits": [["12:30p.m.", "TIME:time"]], "gold_spoken": "我喜欢在下午十二点三十分散步，享受午后的阳光"}
+{"src": "计算2018-10-12=2000，你回答的很棒", "meta": {"source": "stress"}, "edits": [["2018-10-12=2000", "MATH:math"]], "gold_spoken": "计算两千零一十八减十减十二等于两千，你回答的很棒"}
+{"src": "计算14022-10-12=14000，你回答的很棒", "meta": {"source": "stress"}, "edits": [["14022-10-12=14000", "MATH:math"]], "gold_spoken": "计算一万四千零二十二减十减十二等于一万四千，你回答的很棒"}
+{"src": "计算4022-10=4012，你回答的很棒", "meta": {"source": "stress"}, "edits": [["4022-10=4012", "MATH:math"]], "gold_spoken": "计算四千零二十二减十等于四千零一十二，你回答的很棒"}
+{"src": "拨打2022-10-20电话", "meta": {"source": "stress"}, "edits": [["2022-10-20", "PHONE:phone"]], "gold_spoken": "拨打二零二二幺零二零电话"}
+{"src": "产品标签序号2022.10.20", "meta": {"source": "stress"}, "edits": [["2022.10.20", "SERIAL:serial"]], "gold_spoken": "产品标签序号二零二二点一零点二零"}
+{"src": "计算120-110=10", "meta": {"source": "stress"}, "edits": [["120-110=10", "MATH:math"]], "gold_spoken": "计算一百二十减一百一十等于十"}
+{"src": "报警拨打110来了110人", "meta": {"source": "stress"}, "edits": [["110", "PHONE:phone"], ["110人", "MEASURE:measure"]], "gold_spoken": "报警拨打幺幺零来了一百一十人"}
+{"src": "时间21:00左右，比分来到了120:110", "meta": {"source": "stress"}, "edits": [["21:00", "TIME:time"], ["120:110", "SCORE:score"]], "gold_spoken": "时间二十一点左右，比分来到了一百二十比一百一十"}
+{"src": "计算21-10等于11，11在20-10区间内", "meta": {"source": "stress"}, "edits": [["21-10", "MATH:math"]], "gold_spoken": "计算二十一减十等于十一，十一在二十到十区间内"}
+{"src": "邮件地址希望小区21-10-101", "meta": {"source": "stress"}, "edits": [["21-10-101", "ADDRESS:address"]], "gold_spoken": "邮件地址希望小区二一杠一零杠一零一"}
+{"src": "先算货车前3小时一共走了3×60=180千米，加上后2小时的140千米，去时总路程就是180+140=320千米，原路返回总路程还是320千米，最后用320÷4=80千米", "meta": {"source": "stress"}, "edits": [["3小时", "MEASURE:measure"], ["3x60=180千米", "MATH:math"], ["2小时", "MEASURE:measure"], ["140千米", "MEASURE:measure"], ["180+140=320千米", "MATH:math"], ["320÷4=80千米", "MATH:math"]], "gold_spoken": "先算货车前三小时一共走了三乘六十等于一百八十千米，加上后两小时的一百四十千米，去时总路程就是一百八十加一百四十等于三百二十千米，原路返回总路程还是三百二十千米，最后用三百二十除以四等于八十千米"}
+{"src": "那年夏天，也就是2008年4月，我们迎来了一场盛会", "meta": {"source": "stress"}, "edits": [["2008年4月", "DATE:date"]], "gold_spoken": "那年夏天，也就是二零零八年四月，我们迎来了一场盛会"}
+{"src": "国庆假期覆盖了01年04月~10年04月，是旅游的黄金周。", "meta": {"source": "cases_num"}, "edits": [["01年04月~10年04月", "DATE:date"]], "gold_spoken": "国庆假期覆盖了零一年四月到一零年四月，是旅游的黄金周。"}
+{"src": "时间跨度自04年9月1日~30日，满载回忆。", "meta": {"source": "cases_num"}, "edits": [["04年9月1日~30日", "DATE:date"]], "gold_spoken": "时间跨度自零四年九月一日到三十日，满载回忆。"}
+{"src": "跨年度的回忆，从10月1日~7日的每一天，意义非凡。", "meta": {"source": "cases_num"}, "edits": [["10月1日~7日", "DATE:date"]], "gold_spoken": "跨年度的回忆，从十月一日到七日的每一天，意义非凡。"}
+{"src": "秋天是一个美丽的季节，10月01号~07日，是观赏红叶的佳期。", "meta": {"source": "cases_num"}, "edits": [["10月01号~07日", "DATE:date"]], "gold_spoken": "秋天是一个美丽的季节，十月一号到七日，是观赏红叶的佳期。"}
+{"src": "等待是如此的漫长且煎熬，1月~10月，她始终在这里等待着他的出现。", "meta": {"source": "cases_num"}, "edits": [["1月~10月", "DATE:date"]], "gold_spoken": "等待是如此的漫长且煎熬，一月到十月，她始终在这里等待着他的出现。"}
+{"src": "√16=4。", "edits": [["√16=4", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "polynorm-adapted"}, "gold_spoken": "根号十六等于四。"}
+{"src": "3²=9。", "edits": [["3²=9", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "polynorm-adapted"}, "gold_spoken": "三的平方等于九。"}
+{"src": "2³=8。", "edits": [["2³=8", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "polynorm-adapted"}, "gold_spoken": "二的立方等于八。"}
+{"src": "√(25)=5。", "edits": [["√(25)=5", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "polynorm-adapted"}, "gold_spoken": "根号二十五等于五。"}
+{"src": "10²=100。", "edits": [["10²=100", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "polynorm-adapted"}, "gold_spoken": "十的平方等于一百。"}
+{"src": "2^3=8。", "edits": [["2^3=8", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "polynorm-adapted"}, "gold_spoken": "二的三次方等于八。"}
+{"src": "根据勾股定理a²+b²=c²，可求斜边。", "edits": [["a²+b²=c²", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "根据勾股定理a的平方加b的平方等于c的平方，可求斜边。"}
+{"src": "质能方程E=mc²改变了物理学。", "edits": [["E=mc²", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "质能方程E等于mc的平方改变了物理学。"}
+{"src": "解方程f(y)=x^2+1即可。", "edits": [["f(y)=x^2+1", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "解方程fy等于x的平方加一即可。"}
+{"src": "一次函数写作y=kx+b。", "edits": [["y=kx+b", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "一次函数写作y等于kx加b。"}
+{"src": "已知(a+b)²=c²成立。", "edits": [["(a+b)²=c²", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "已知a加b的平方等于c的平方成立。"}
+{"src": "欧拉公式e^(iπ)+1=0很优美。", "edits": [["e^(iπ)+1=0", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "欧拉公式e的i派次方加一等于零很优美。"}
+{"src": "圆周率π≈3.14是常识。", "edits": [["π≈3.14", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "圆周率派约等于三点一四是常识。"}
+{"src": "设α+β=γ为夹角关系。", "edits": [["α+β=γ", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "设阿尔法加贝塔等于伽马为夹角关系。"}
+{"src": "当x≥5时不等式成立。", "edits": [["x≥5", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "当x大于等于五时不等式成立。"}
+{"src": "老师板书sin30°=0.5。", "edits": [["sin30°=0.5", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "老师板书正弦三十度等于零点五。"}
+{"src": "化简√(440x+100y²)=0后得到答案。", "edits": [["√(440x+100y²)=0", "MATH:math"]], "meta": {"scenario": "eval/Mathematical Expression", "kind": "positive", "classes": ["MATH"], "ctxs": ["math"], "domain": "Mathematical Expression", "source": "formula-algebra"}, "gold_spoken": "化简根号四百四十x加一百y的平方等于零后得到答案。"}

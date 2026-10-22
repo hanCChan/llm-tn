@@ -1,0 +1,15 @@
+file	idx	旧片段	新片段	新片段读音==gold_spoken	src
+polynorm_eval.jsonl	113	23	S23	True	型号Galaxy S23。
+polynorm_eval.jsonl	128	·12345	京A·12345	True	车牌号：京A·12345。
+polynorm_eval.jsonl	129	·88888	沪A·88888	True	沪A·88888。
+polynorm_eval.jsonl	131	12345678	G12345678	True	护照号G12345678。
+polynorm_eval.jsonl	133	5N1	H5N1	True	禽流感病毒H5N1。
+polynorm_eval.jsonl	134	1N1	H1N1	True	甲型H1N1流感。
+hard_num.jsonl	123	3301	dell3301	True	我尝试登录名为dell3301的账户，但忘记了密码，需要重置。
+hard_num.jsonl	124	1998	tencent_1998	True	他在游戏中的昵称是tencent_1998，这个名字很有特色，让人过目难忘。
+hard_num.jsonl	130	000	苏MMA000	True	那辆车的车牌号是苏MMA000，交警已经记录下了这个信息。
+hard_num.jsonl	131	330	A330	True	这家航空公司空中客车很多，其中，空中客车A330是一种宽体客机，广受航空公司欢迎。
+hard_num.jsonl	132	01	s01	True	该公司推出了三种新型号的产品：s01、s02和s03，它们各有特点。
+hard_num.jsonl	132	02	s02	True	该公司推出了三种新型号的产品：s01、s02和s03，它们各有特点。
+hard_num.jsonl	132	03	s03	True	该公司推出了三种新型号的产品：s01、s02和s03，它们各有特点。
+hard_num.jsonl	133	330	A330	True	我最喜欢的飞机就是空中客车A330，它的舒适度和飞行稳定性都非常出色。

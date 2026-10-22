@@ -14,10 +14,12 @@
     3) CharTokenizer 逐字分词: BPE 会把 span 边界两侧的字符粘成一个 token
        (训练集 4.4% 的 span 骑界, 如 '%，' 一半在 span 里一半在外, 标签无解);
        逐字一个 token 后字符与标签一一对应, 骑界从定义上消失。
-    4) 两步 span 解码(decode_offsets) + 结构修复(repair_offsets):
-       先按 P(非O)>P(O) 切边界, 再对 span 内各字符的类别概率求和整段定一次类,
-       避免逐字 argmax 时同一 span 内类别跳变; 之后按配对/前缀等结构规则修正
-       括号、币种代码等确定性错误 —— 二者都不改模型概率, 不重训即可生效。
+    4) 两步 span 解码(decode_offsets): 先按 P(非O)>P(O) 切边界, 再对 span 内各字符的
+       类别概率求和整段定一次类, 避免逐字 argmax 时同一 span 内类别跳变 ——
+       不改模型概率, 不重训即可生效。
+       (曾有第五件"结构修复层 repair_offsets"——解码后按括号/币种等形态规则改 span,
+        2026-10-22 下线删除: 依赖特定错误形态的规则补丁不符合泛化要求, 其收益已由
+        数据工程补齐, 见 data_synth/NOTES.md。)
 
 训练(两卡):
     torchrun --nproc_per_node 2 -m train.nar --data data/train_merged.jsonl:2 \
@@ -298,77 +300,16 @@ def decode_offsets(probs):
     return list(zip(starts.tolist(), ends.tolist(), c_idx.tolist()))
 
 
-_OPEN = {")": "(", "）": "（", "]": "[", "】": "【"}
-_CLOSE_OF = {v: k for k, v in _OPEN.items()}
-_LETTER = re.compile(r"[A-Za-z]")
-_PURE_NUM = re.compile(r"^[0-9][0-9,，.]*$")
-_MONEY_CODES = None
-
-
-def _money_codes():
-    """money/code.tsv 第一列(USD、HK$、A$ ...), 长的优先匹配。懒加载, 不用修复层时不读文件。"""
-    global _MONEY_CODES
-    if _MONEY_CODES is None:
-        p = os.path.join(_ROOT, "wetext", "tn", "chinese", "data", "money", "code.tsv")
-        codes = set()
-        with open(p, encoding="utf-8") as f:
-            for line in f:
-                c = line.split("\t", 1)[0].strip()
-                if c:
-                    codes.add(c)
-        _MONEY_CODES = sorted(codes, key=len, reverse=True)
-    return _MONEY_CODES
-
-
-def repair_offsets(src, spans):
-    """修复层: 解码后三条**结构规则**, 不改模型概率。
-
-    这些错误源自老师 v2 的标注噪声(蒸馏时被学走), 用数据修要重训且有随机性; 结构规则
-    确定、可审计、零延迟成本。
-      1) 去 span 首尾空白;
-      2) 括号配对: span 里右括号比左括号多、且 span 左邻正是对应左括号 -> 把左括号
-         并进来(对称地, 左括号多且右邻是对应右括号 -> 并进右括号), 否则读音会残留
-         半个括号(模型标了 010)65432100, 修成 (010)65432100);
-      3) 货币代码前缀: 纯数字 span 左侧是 money/code.tsv 里的代码(中间可隔一个空格)
-         -> 并进来并定为 MONEY; 代码左侧不能是字母, 防 "XUSD 1" 误配。
-    扩张后与前一个 span 重叠: 保留前一个(修复层不能制造重叠)。
-    """
-    out = []
-    for s, e, c in spans:
-        while s < e and src[s].isspace():
-            s += 1
-        while e > s and src[e - 1].isspace():
-            e -= 1
-        if s >= e:
-            continue
-        seg = src[s:e]
-        for r, l in _OPEN.items():
-            if seg.count(r) > seg.count(l) and s > 0 and src[s - 1] == l:
-                s -= 1
-            elif seg.count(l) > seg.count(r) and e < len(src) and src[e] == _CLOSE_OF[l]:
-                e += 1
-        if _PURE_NUM.match(src[s:e]):
-            j = s - 1 if s > 0 and src[s - 1] == " " else s
-            for code in _money_codes():
-                b = j - len(code)
-                if b >= 0 and src[b:j] == code and not (b > 0 and _LETTER.match(src[b - 1])):
-                    s, c = b, _CLS_INDEX["MONEY"]
-                    break
-        if out and s < out[-1][1]:                # 扩张后与前一个 span 重叠: 保留前一个
-            continue
-        out.append((s, e, c))
-    return out
-
-
 # ---------------------------------------------------------------------------
 # 推理引擎
 # ---------------------------------------------------------------------------
 
 class NARRunner:
-    """单卡单句推理: 建输入 -> 一次前向 -> numpy 两步解码 -> 结构修复。
+    """单卡单句推理: 建输入 -> 一次前向 -> numpy 两步解码。
 
     消融阶段的最小实现(无合批/无 CUDA graph/无 packing) —— 那些属于后续的
-    服务端优化, 本文件只交付"算法四件套"。同一 runner 只能在一个线程里用。
+    服务端优化, 本文件只交付"算法三件套"(头/echo+逐字/两步解码)。同一 runner
+    只能在一个线程里用。
     """
 
     def __init__(self, model_dir, device="cuda", dtype=torch.bfloat16):
@@ -389,7 +330,6 @@ class NARRunner:
                 logits = self.model(t, pos, self.model.attend_causal)
                 probs = torch.softmax(logits[0, off:off + n].float(), dim=-1).cpu().numpy()
             spans = decode_offsets(probs)
-            spans = repair_offsets(src, spans)
             out.append([[src[s:e], _CLS_LABEL[c]] for s, e, c in spans])
         return out
 

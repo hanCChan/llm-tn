@@ -33,10 +33,12 @@
 | `train/constants.py` | 特殊 token / 分隔符 |
 | `wetext/` | vendored [WeTextProcessing](https://github.com/wenet-e2e/WeTextProcessing)，含本项目新增的场景 normalizer 与规则 |
 | `data/train_data/` | 训练数据，按 `positive_single` / `positive_combo` / `negative` 分场景 |
-| `data/test_data/` | 评测集：`polynorm_eval.jsonl`、`hard_num.jsonl` |
+| `data/test_data/` | 评测集：`polynorm_eval.jsonl`、`hard_num.jsonl`（原口径）；`gold_v2_serial/` = 同一批句子的 SERIAL 口径 v2 版（字母+数字整体，见该目录 README） |
+| `data_synth/` | **合成训练数据**（标签由构造决定，无蒸馏）：值文法 + 句子框架 + 语境对比 + 线上切片样本，见 `data_synth/NOTES.md` |
 | `test/eval_nar.py` | NAR 端到端评估（与 `eval_e2e.py` 同口径，可直接对比 v2） |
 | `test/` | 端到端评估、服务压测、切分器不变式测试 |
 | `model/v2/` | 当前使用的模型权重 |
+| `runs/nar_best/` | **当前最优 NAR 权重**（人工×2 + data_synth 三份合成，配方与质量数字见 `data_synth/NOTES.md`） |
 
 ## NAR 定类（train/nar.py，非自回归标注）
 

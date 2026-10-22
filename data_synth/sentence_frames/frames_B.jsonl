@@ -1,0 +1,300 @@
+{"cls": "TIME", "sub": "clock", "frame": "会议定在{X}开始，请大家提前十分钟到场。"}
+{"cls": "TIME", "sub": "clock", "frame": "明天下午{X}，在三楼小会议室碰一下方案。"}
+{"cls": "TIME", "sub": "clock", "frame": "他每天{X}准时起床，雷打不动。"}
+{"cls": "TIME", "sub": "clock", "frame": "最后一班地铁{X}从起点站发车，错过就只能打车了。"}
+{"cls": "TIME", "sub": "clock", "frame": "您预约的口腔科复诊时间是周四上午{X}，请携带就诊卡。"}
+{"cls": "TIME", "sub": "clock", "frame": "孩子们{X}放学，校门口那会儿特别堵。"}
+{"cls": "TIME", "sub": "clock", "frame": "新闻发布会将于今天{X}在市政府新闻中心举行。"}
+{"cls": "TIME", "sub": "clock", "frame": "比赛{X}开球，我们早点出门吧。"}
+{"cls": "TIME", "sub": "clock", "frame": "我昨晚熬到{X}才睡，今天整个人都是懵的。"}
+{"cls": "TIME", "sub": "clock", "frame": "你{X}之前把报告发我邮箱就行。"}
+{"cls": "TIME", "sub": "clock", "frame": "本次列车预计{X}到达终点站，晚点约二十分钟。"}
+{"cls": "TIME", "sub": "clock", "frame": "据目击者回忆，案发当晚{X}左右，楼道里传来一声巨响。"}
+{"cls": "TIME", "sub": "clock", "frame": "他看了一眼墙上的挂钟，已经{X}了，她还没有回来。"}
+{"cls": "TIME", "sub": "clock", "frame": "客服热线人工坐席服务截止到每晚{X}，之后请留言。"}
+{"cls": "TIME", "sub": "clock", "frame": "那天{X}，电话铃声突然响了起来。"}
+{"cls": "TIME", "sub": "clock", "frame": "约好的{X}，结果他一直到快吃午饭才露面。"}
+{"cls": "TIME", "sub": "clock", "frame": "闹钟定在{X}，可我还是睡过头了。"}
+{"cls": "TIME", "sub": "clock", "frame": "被告人于当日{X}离开住所，随后驾车前往案发地点。"}
+{"cls": "TIME", "sub": "clock", "frame": "直播{X}准时开始，记得点关注。"}
+{"cls": "TIME", "sub": "clock", "frame": "周六{X}，体育馆门口集合，统一坐大巴去赛场。"}
+{"cls": "TIME", "sub": "clock", "frame": "考试从{X}开始，迟到十五分钟不得入场。"}
+{"cls": "TIME", "sub": "clock", "frame": "飞船于北京时间{X}成功点火升空。"}
+{"cls": "TIME", "sub": "clock", "frame": "下周一的组会改到{X}了，原来那个时间教室被占了。"}
+{"cls": "TIME", "sub": "clock", "frame": "他说{X}来接我，现在都过去半小时了。"}
+{"cls": "TIME", "sub": "clock", "frame": "叫号系统显示，您前面还有六位，预计{X}能轮到您。"}
+{"cls": "TIME", "sub": "clock", "frame": "据史料记载，起义的枪声在那天凌晨{X}打响。"}
+{"cls": "TIME", "sub": "clock", "frame": "晚上{X}以后就别给我发消息了，我要早睡。"}
+{"cls": "TIME", "sub": "clock", "frame": "我们约{X}在咖啡馆见面，不见不散。"}
+{"cls": "TIME", "sub": "clock", "frame": "当晚{X}，最后一批救援人员撤离了现场。"}
+{"cls": "TIME", "sub": "clock", "frame": "群里通知：明早{X}全体在操场升旗。"}
+{"cls": "TIME", "sub": "ampm", "frame": "我的 flight 是{X}起飞的，从 JFK 出发。"}
+{"cls": "TIME", "sub": "ampm", "frame": "会议邀请上写着 Meeting starts at {X} EST，换算过来是咱们早上。"}
+{"cls": "TIME", "sub": "ampm", "frame": "Zoom call 定在{X}，记得 mute 一下麦克风。"}
+{"cls": "TIME", "sub": "ampm", "frame": "老板发邮件说 deadline 是今天{X}，别拖了。"}
+{"cls": "TIME", "sub": "ampm", "frame": "酒店 check-in 时间是{X}以后，我们可以先去逛逛。"}
+{"cls": "TIME", "sub": "ampm", "frame": "根据 itinerary，我们{X}抵达 Heathrow 机场。"}
+{"cls": "TIME", "sub": "ampm", "frame": "明天的 standup 改到{X}，因为美国同事那边有时差。"}
+{"cls": "TIME", "sub": "ampm", "frame": "这家 brunch 店只营业到{X}，我们得赶紧。"}
+{"cls": "TIME", "sub": "ampm", "frame": "Webinar 将在{X} PST 开始，欢迎提前注册。"}
+{"cls": "TIME", "sub": "ampm", "frame": "我约了 Dr. Smith {X} 的 appointment，不能迟到。"}
+{"cls": "TIME", "sub": "ampm", "frame": "登机口显示 boarding time 是{X}，现在还来得及。"}
+{"cls": "TIME", "sub": "ampm", "frame": "你那边几点？我这儿已经{X}了，still working。"}
+{"cls": "TIME", "sub": "ampm", "frame": "课表上写着 Lecture 在{X}，教室是 Hall B。"}
+{"cls": "TIME", "sub": "ampm", "frame": "Party 从{X}开始，dress code 是 casual。"}
+{"cls": "TIME", "sub": "ampm", "frame": "别忘了，dinner reservation 是{X}，在 downtown 那家意大利餐厅。"}
+{"cls": "TIME", "sub": "ampm", "frame": "纽约那边的开盘时间是当地{X}，对应北京时间晚上。"}
+{"cls": "TIME", "sub": "ampm", "frame": "他发 ins 说自己{X}还在 office 加班。"}
+{"cls": "TIME", "sub": "ampm", "frame": "根据 schedule，shuttle bus 每天{X}从酒店门口出发。"}
+{"cls": "TIME", "sub": "ampm", "frame": "演唱会门票上印着 Doors open {X}，我们早点去排队。"}
+{"cls": "TIME", "sub": "ampm", "frame": "国际电话会议定于{X} GMT 举行，请各方准时接入。"}
+{"cls": "TIME", "sub": "ampm", "frame": "Check-out 必须在{X}之前完成，否则要加收半天房费。"}
+{"cls": "TIME", "sub": "ampm", "frame": "机场广播：flight to Tokyo 将推迟至{X}起飞。"}
+{"cls": "TIME", "sub": "ampm", "frame": "我把 alarm 设成了{X}，明天一早要去赶 train。"}
+{"cls": "TIME", "sub": "ampm", "frame": "伦敦的 conference 第一场 keynote 在{X}，我们提前去占座。"}
+{"cls": "TIME", "sub": "ampm", "frame": "她的 Uber 预计{X}到，让我们在楼下等。"}
+{"cls": "TIME", "sub": "ampm", "frame": "日程表上写着：{X} – coffee break，然后是 panel discussion。"}
+{"cls": "TIME", "sub": "ampm", "frame": "Daylight saving 开始以后，那场比赛的 kickoff 变成了{X}。"}
+{"cls": "TIME", "sub": "ampm", "frame": "邮件里说 interview 安排在明天{X}，Teams 链接已附上。"}
+{"cls": "TIME", "sub": "ampm", "frame": "新加坡转机的 connecting flight 是{X}，中间只有不到一个小时。"}
+{"cls": "TIME", "sub": "ampm", "frame": "Hey，今晚{X} 一起 game 吗？"}
+{"cls": "TIME", "sub": "range", "frame": "本店营业时间：{X}，节假日照常营业。"}
+{"cls": "TIME", "sub": "range", "frame": "图书馆开放时间为每周一至周五{X}。"}
+{"cls": "TIME", "sub": "range", "frame": "食堂午餐供应时间是{X}，过时不候。"}
+{"cls": "TIME", "sub": "range", "frame": "窗口办理业务的时间为工作日{X}，周末休息。"}
+{"cls": "TIME", "sub": "range", "frame": "博物馆夏季开放{X}，闭馆前一小时停止入场。"}
+{"cls": "TIME", "sub": "range", "frame": "客服在线时间{X}，其余时段请留言。"}
+{"cls": "TIME", "sub": "range", "frame": "景区索道运行时间：{X}，遇大风天气暂停。"}
+{"cls": "TIME", "sub": "range", "frame": "我们这边上班是{X}，中午休息一个半小时。"}
+{"cls": "TIME", "sub": "range", "frame": "游泳馆每天{X}对外开放，需提前预约。"}
+{"cls": "TIME", "sub": "range", "frame": "门诊挂号时间为上午{X}，下午不再放号。"}
+{"cls": "TIME", "sub": "range", "frame": "施工时间限定在{X}，夜间禁止作业。"}
+{"cls": "TIME", "sub": "range", "frame": "社区疫苗接种点的服务时间是{X}，请错峰前往。"}
+{"cls": "TIME", "sub": "range", "frame": "这家早餐店只开{X}，过了点就关门。"}
+{"cls": "TIME", "sub": "range", "frame": "快递柜取件高峰集中在{X}，建议避开。"}
+{"cls": "TIME", "sub": "range", "frame": "明天要停电，时间大约是{X}，请提前做好准备。"}
+{"cls": "TIME", "sub": "range", "frame": "考试时间：{X}，考生需提前三十分钟进场。"}
+{"cls": "TIME", "sub": "range", "frame": "夜市每晚{X}营业，周一不开。"}
+{"cls": "TIME", "sub": "range", "frame": "健身房会员可在{X}使用器械区。"}
+{"cls": "TIME", "sub": "range", "frame": "按物业规定，小区内装修只能在{X}进行。"}
+{"cls": "TIME", "sub": "range", "frame": "地铁早高峰一般是{X}，那会儿车厢挤得要命。"}
+{"cls": "TIME", "sub": "range", "frame": "那个网红店排队要好久，开门是{X}，咱们得早点去。"}
+{"cls": "TIME", "sub": "range", "frame": "银行网点对公业务受理时间{X}，个人业务延长至傍晚。"}
+{"cls": "TIME", "sub": "range", "frame": "探视时间为每日{X}，每次限两人。"}
+{"cls": "TIME", "sub": "range", "frame": "直播间每晚{X}上新，错过等明天。"}
+{"cls": "TIME", "sub": "range", "frame": "根据公告，收费站将于{X}进行设备检修，期间部分车道关闭。"}
+{"cls": "TIME", "sub": "range", "frame": "学校规定学生在{X}期间不得离开校园。"}
+{"cls": "TIME", "sub": "range", "frame": "这条公交线路的首末班时间是{X}。"}
+{"cls": "TIME", "sub": "range", "frame": "办公室的空调只在{X}开着，加班的同事自己准备风扇吧。"}
+{"cls": "TIME", "sub": "range", "frame": "法院诉讼服务中心接待时间：工作日{X}。"}
+{"cls": "TIME", "sub": "range", "frame": "他们约好在{X}之间通话，正好是两边都方便的时段。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "系统日志显示，服务在{X}出现异常并自动重启。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "[ERROR] {X} 数据库连接超时，正在重试。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "监控截图显示，嫌疑人于{X}进入电梯。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "打卡记录：上班签到{X}，状态正常。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "订单创建时间{X}，支付状态为待付款。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "服务器告警：{X} CPU 使用率超过阈值。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "行车记录仪的时间戳停在了{X}。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "根据交易流水，这笔转账在{X}完成。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "告警邮件里的触发时间是{X}，比我们发现问题早了很久。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "INFO {X} 用户登录成功。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "最后一次心跳包发送于{X}，之后节点失联。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "门禁系统记录到他在当晚{X}刷卡离开。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "赛事计时系统显示，终点摄像在{X}捕捉到冲线画面。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "备份任务开始于{X}，持续了四十多分钟。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "根据调取的通话记录，最后一通电话的拨出时间为{X}。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "地震台网测定，本次地震发生于北京时间{X}。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "日志里第一条报错出现在{X}，你往前翻翻看。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "工单编号后面那个时间{X}就是用户提交的时间。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "抢购开始时间精确到秒：{X}。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "车站闸机记录显示，乘客于{X}进站。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "我查了一下 nginx 日志，请求是{X}打进来的。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "截至{X}，系统累计处理请求超过一亿次。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "心电监护仪在{X}发出报警声，值班护士立即赶到。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "交易所数据显示，熔断机制在{X}被触发。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "消息撤回提示的时间是{X}，她肯定看到了。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "定时任务被设定为每天{X}执行一次数据清理。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "卫星于{X}进入预定轨道，发射任务圆满成功。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "根据黑匣子记录，机组在{X}最后一次与塔台通话。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "你看这条 commit 的时间，{X}，那会儿他还在线。"}
+{"cls": "TIME", "sub": "duration_like_clock", "frame": "WARN 磁盘空间不足，检测时间{X}，剩余容量不足一成。"}
+{"cls": "DATE", "sub": "full", "frame": "本合同自{X}起生效。"}
+{"cls": "DATE", "sub": "full", "frame": "我是{X}出生的，属龙。"}
+{"cls": "DATE", "sub": "full", "frame": "他们在{X}登记结婚，没办婚礼。"}
+{"cls": "DATE", "sub": "full", "frame": "中华人民共和国于{X}宣告成立。"}
+{"cls": "DATE", "sub": "full", "frame": "演唱会定在{X}，地点是国家体育场。"}
+{"cls": "DATE", "sub": "full", "frame": "本通知发布日期：{X}。"}
+{"cls": "DATE", "sub": "full", "frame": "据报道，该事故发生在{X}凌晨。"}
+{"cls": "DATE", "sub": "full", "frame": "你的护照有效期到{X}，出国前记得去换发。"}
+{"cls": "DATE", "sub": "full", "frame": "小说的开头写道：{X}，一场大雪覆盖了整座小城。"}
+{"cls": "DATE", "sub": "full", "frame": "原告于{X}向本院提起诉讼。"}
+{"cls": "DATE", "sub": "full", "frame": "开学报到日是{X}，请新生携带录取通知书。"}
+{"cls": "DATE", "sub": "full", "frame": "我记得特别清楚，{X}那天下着大雨，我们第一次见面。"}
+{"cls": "DATE", "sub": "full", "frame": "这批疫苗的生产日期是{X}，还在有效期内。"}
+{"cls": "DATE", "sub": "full", "frame": "世界杯决赛于{X}在卢赛尔体育场举行。"}
+{"cls": "DATE", "sub": "full", "frame": "公司将在{X}召开年度股东大会。"}
+{"cls": "DATE", "sub": "full", "frame": "根据档案记载，这座桥于{X}正式通车。"}
+{"cls": "DATE", "sub": "full", "frame": "下次复查请于{X}前来，届时需空腹抽血。"}
+{"cls": "DATE", "sub": "full", "frame": "截止报名时间为{X}，逾期不再受理。"}
+{"cls": "DATE", "sub": "full", "frame": "那封信落款写着{X}，字迹已经有些模糊了。"}
+{"cls": "DATE", "sub": "full", "frame": "奶奶走的那天是{X}，全家人都赶了回来。"}
+{"cls": "DATE", "sub": "full", "frame": "官方宣布，新版教材将从{X}起在全国推行。"}
+{"cls": "DATE", "sub": "full", "frame": "他在微博上说，{X}将是他退役的日子。"}
+{"cls": "DATE", "sub": "full", "frame": "被告人因涉嫌诈骗罪于{X}被刑事拘留。"}
+{"cls": "DATE", "sub": "full", "frame": "房租每季度交一次，下一次是{X}。"}
+{"cls": "DATE", "sub": "full", "frame": "航天员乘组于{X}顺利返回地面。"}
+{"cls": "DATE", "sub": "full", "frame": "毕业典礼{X}举行，家长可以入场观礼。"}
+{"cls": "DATE", "sub": "full", "frame": "我们的结婚纪念日？是{X}啊，你又忘了。"}
+{"cls": "DATE", "sub": "full", "frame": "签证显示入境截止日期为{X}，千万别超期。"}
+{"cls": "DATE", "sub": "full", "frame": "那场战役始于{X}，历时四十余天。"}
+{"cls": "DATE", "sub": "full", "frame": "本条例经市人大常委会审议通过，{X}公布。"}
+{"cls": "DATE", "sub": "year", "frame": "这座寺庙始建于{X}，距今已有上千年历史。"}
+{"cls": "DATE", "sub": "year", "frame": "我{X}大学毕业，然后就来了这座城市。"}
+{"cls": "DATE", "sub": "year", "frame": "{X}的奥运会在北京举办。"}
+{"cls": "DATE", "sub": "year", "frame": "公司成立于{X}，最初只有三名员工。"}
+{"cls": "DATE", "sub": "year", "frame": "他是{X}入职的老员工了。"}
+{"cls": "DATE", "sub": "year", "frame": "根据人口普查数据，{X}全市常住人口突破千万。"}
+{"cls": "DATE", "sub": "year", "frame": "那部电影上映于{X}，当时票房并不理想。"}
+{"cls": "DATE", "sub": "year", "frame": "预计到{X}，这条高铁线路将全线贯通。"}
+{"cls": "DATE", "sub": "year", "frame": "{X}夏天，我们一家搬到了南方。"}
+{"cls": "DATE", "sub": "year", "frame": "本届世锦赛是继{X}之后再次在亚洲举办。"}
+{"cls": "DATE", "sub": "year", "frame": "这辆车是{X}买的，开了没几年就出了毛病。"}
+{"cls": "DATE", "sub": "year", "frame": "史书记载，郑和于{X}首次下西洋。"}
+{"cls": "DATE", "sub": "year", "frame": "你还记得{X}吗？那年疫情刚开始。"}
+{"cls": "DATE", "sub": "year", "frame": "他在{X}凭借这部小说获得了茅盾文学奖。"}
+{"cls": "DATE", "sub": "year", "frame": "截至{X}底，全国高速公路总里程已居世界第一。"}
+{"cls": "DATE", "sub": "year", "frame": "我爸是{X}下岗的，后来自己开了个小卖部。"}
+{"cls": "DATE", "sub": "year", "frame": "国家计划于{X}前实现碳达峰目标。"}
+{"cls": "DATE", "sub": "year", "frame": "这瓶红酒是{X}的，口感正处于巅峰期。"}
+{"cls": "DATE", "sub": "year", "frame": "这首歌火遍大街小巷是在{X}，当时谁都会哼两句。"}
+{"cls": "DATE", "sub": "year", "frame": "学校创办于{X}，前身是一所师范学堂。"}
+{"cls": "DATE", "sub": "year", "frame": "战争结束于{X}，此后两国关系逐步缓和。"}
+{"cls": "DATE", "sub": "year", "frame": "{X}财报显示，公司营收同比下滑。"}
+{"cls": "DATE", "sub": "year", "frame": "我们是{X}认识的，到现在快十年了吧。"}
+{"cls": "DATE", "sub": "year", "frame": "该法律在{X}经过了第三次修订。"}
+{"cls": "DATE", "sub": "year", "frame": "那支球队上一次夺冠还是在{X}，球迷们等得太久了。"}
+{"cls": "DATE", "sub": "year", "frame": "她从{X}开始坚持跑步，一天都没落下。"}
+{"cls": "DATE", "sub": "year", "frame": "那年是{X}，镇上第一次通了电。"}
+{"cls": "DATE", "sub": "year", "frame": "根据规划，到{X}城市轨道交通里程将翻一番。"}
+{"cls": "DATE", "sub": "year", "frame": "这本日记的主人生于{X}，卒年不详。"}
+{"cls": "DATE", "sub": "year", "frame": "他在简历里写着自己{X}考取了注册会计师。"}
+{"cls": "DATE", "sub": "month_day", "frame": "每年{X}是植树节，学校组织大家去种树。"}
+{"cls": "DATE", "sub": "month_day", "frame": "我生日是{X}，正好赶上国庆假期。"}
+{"cls": "DATE", "sub": "month_day", "frame": "我们约在{X}那天去民政局领证。"}
+{"cls": "DATE", "sub": "month_day", "frame": "快递预计{X}送达，请保持电话畅通。"}
+{"cls": "DATE", "sub": "month_day", "frame": "{X}是情人节，花店早早就备好了玫瑰。"}
+{"cls": "DATE", "sub": "month_day", "frame": "机票我订的是{X}出发的，返程还没定。"}
+{"cls": "DATE", "sub": "month_day", "frame": "本次活动报名截止到{X}，名额有限。"}
+{"cls": "DATE", "sub": "month_day", "frame": "妇女节在{X}，公司给女员工放半天假。"}
+{"cls": "DATE", "sub": "month_day", "frame": "记得{X}之前交作业，老师说不接受补交。"}
+{"cls": "DATE", "sub": "month_day", "frame": "这批货最晚{X}到港。"}
+{"cls": "DATE", "sub": "month_day", "frame": "他的忌日是{X}，每年这天我们都去扫墓。"}
+{"cls": "DATE", "sub": "month_day", "frame": "{X}晚上有场流星雨，据说肉眼可见。"}
+{"cls": "DATE", "sub": "month_day", "frame": "学校通知{X}起放寒假。"}
+{"cls": "DATE", "sub": "month_day", "frame": "我们打算{X}回老家过年，车票已经抢到了。"}
+{"cls": "DATE", "sub": "month_day", "frame": "每年的{X}，这座城市都会举办盛大的灯会。"}
+{"cls": "DATE", "sub": "month_day", "frame": "劳动节是{X}，今年连休五天。"}
+{"cls": "DATE", "sub": "month_day", "frame": "合同里约定，乙方须于{X}前交付全部货物。"}
+{"cls": "DATE", "sub": "month_day", "frame": "每到{X}，电商平台都会搞大促，今年也不例外。"}
+{"cls": "DATE", "sub": "month_day", "frame": "公司周年庆定在{X}，到时候全员聚餐。"}
+{"cls": "DATE", "sub": "month_day", "frame": "你看下日历，{X}是周几？我想请个假。"}
+{"cls": "DATE", "sub": "month_day", "frame": "她在朋友圈说{X}要去云南旅行。"}
+{"cls": "DATE", "sub": "month_day", "frame": "根据气象预报，{X}前后将有一次明显降温过程。"}
+{"cls": "DATE", "sub": "month_day", "frame": "{X}那天我们第一次牵手，我一直记得。"}
+{"cls": "DATE", "sub": "month_day", "frame": "抗战胜利纪念日是{X}，各地都举行了纪念活动。"}
+{"cls": "DATE", "sub": "month_day", "frame": "期末考试安排在{X}，复习时间不多了。"}
+{"cls": "DATE", "sub": "month_day", "frame": "王大爷说，他的退休手续{X}就能办下来。"}
+{"cls": "DATE", "sub": "month_day", "frame": "下一次例会定在{X}，具体时间另行通知。"}
+{"cls": "DATE", "sub": "month_day", "frame": "平安夜是{X}，商场里到处都是圣诞树。"}
+{"cls": "DATE", "sub": "month_day", "frame": "课程表上那门选修课{X}才开课。"}
+{"cls": "DATE", "sub": "month_day", "frame": "你记一下，复诊是{X}，别忘了带病历本。"}
+{"cls": "DATE", "sub": "numeric", "frame": "发票日期：{X}，金额请核对。"}
+{"cls": "DATE", "sub": "numeric", "frame": "系统显示该账户最后登录日期为{X}。"}
+{"cls": "DATE", "sub": "numeric", "frame": "优惠券有效期至：{X}，逾期作废。"}
+{"cls": "DATE", "sub": "numeric", "frame": "报表的统计口径截止到{X}。"}
+{"cls": "DATE", "sub": "numeric", "frame": "车票上印着乘车日期{X}，座位在七号车厢。"}
+{"cls": "DATE", "sub": "numeric", "frame": "订单详情 | 下单日期：{X} | 状态：已发货"}
+{"cls": "DATE", "sub": "numeric", "frame": "合同编号后面附的签署日期是{X}。"}
+{"cls": "DATE", "sub": "numeric", "frame": "文件名里带着{X}，应该是那天导出的数据。"}
+{"cls": "DATE", "sub": "numeric", "frame": "体检报告的检查日期写的是{X}，已经过去半年了。"}
+{"cls": "DATE", "sub": "numeric", "frame": "这个商品的保质期到{X}，赶紧吃掉吧。"}
+{"cls": "DATE", "sub": "numeric", "frame": "数据库里这条记录的 create_date 字段是{X}。"}
+{"cls": "DATE", "sub": "numeric", "frame": "快递面单上的寄件日期是{X}。"}
+{"cls": "DATE", "sub": "numeric", "frame": "截图右下角的日期显示{X}，说明是那天拍的。"}
+{"cls": "DATE", "sub": "numeric", "frame": "药盒上印着 EXP {X}，看来还没过期。"}
+{"cls": "DATE", "sub": "numeric", "frame": "打开 Excel 第一列就是日期，从{X}开始往下排。"}
+{"cls": "DATE", "sub": "numeric", "frame": "银行流水显示，{X}有一笔大额支出。"}
+{"cls": "DATE", "sub": "numeric", "frame": "照片的元数据里拍摄日期是{X}。"}
+{"cls": "DATE", "sub": "numeric", "frame": "会员到期日：{X}，续费可享八折。"}
+{"cls": "DATE", "sub": "numeric", "frame": "收据上的日期{X}和合同对不上，需要重新开。"}
+{"cls": "DATE", "sub": "numeric", "frame": "版本发布记录里写着上线日期{X}。"}
+{"cls": "DATE", "sub": "numeric", "frame": "请将附件命名为“姓名_{X}”后提交。"}
+{"cls": "DATE", "sub": "numeric", "frame": "门诊病历首页的就诊日期为{X}。"}
+{"cls": "DATE", "sub": "numeric", "frame": "筛选条件设置为起始日期{X}，结果就出来了。"}
+{"cls": "DATE", "sub": "numeric", "frame": "准考证上考试日期一栏填的是{X}。"}
+{"cls": "DATE", "sub": "numeric", "frame": "系统提示：您的密码将于{X}过期，请及时修改。"}
+{"cls": "DATE", "sub": "numeric", "frame": "入库单日期{X}，经办人签字处还空着。"}
+{"cls": "DATE", "sub": "numeric", "frame": "这张老照片背面用圆珠笔写着{X}。"}
+{"cls": "DATE", "sub": "numeric", "frame": "判决书落款日期为{X}，加盖法院公章。"}
+{"cls": "DATE", "sub": "numeric", "frame": "后台导出的 CSV 里，日期列全是{X}这种格式的。"}
+{"cls": "DATE", "sub": "numeric", "frame": "工资条右上角打印日期{X}，部门一栏写的是财务部。"}
+{"cls": "DATE", "sub": "decade", "frame": "这种发型在{X}特别流行。"}
+{"cls": "DATE", "sub": "decade", "frame": "他出生在{X}，经历过物资匮乏的日子。"}
+{"cls": "DATE", "sub": "decade", "frame": "{X}末，个人电脑开始走进普通家庭。"}
+{"cls": "DATE", "sub": "decade", "frame": "这座工厂建于{X}初，如今已经停产多年。"}
+{"cls": "DATE", "sub": "decade", "frame": "我们{X}长大的人，小时候哪有什么手机。"}
+{"cls": "DATE", "sub": "decade", "frame": "早在{X}，欧洲就已经开始了工业革命。"}
+{"cls": "DATE", "sub": "decade", "frame": "那首老歌是{X}的经典，我爸妈都会唱。"}
+{"cls": "DATE", "sub": "decade", "frame": "进入{X}以后，互联网彻底改变了人们的生活方式。"}
+{"cls": "DATE", "sub": "decade", "frame": "这批文物可以追溯到{X}中期。"}
+{"cls": "DATE", "sub": "decade", "frame": "港片的黄金时代是{X}，那时候的电影真好看。"}
+{"cls": "DATE", "sub": "decade", "frame": "她收藏了很多{X}的老式缝纫机。"}
+{"cls": "DATE", "sub": "decade", "frame": "{X}上半叶，世界经历了两次大战。"}
+{"cls": "DATE", "sub": "decade", "frame": "这种建筑风格兴起于{X}的芝加哥。"}
+{"cls": "DATE", "sub": "decade", "frame": "爷爷常说，{X}他们下乡插队，吃了不少苦。"}
+{"cls": "DATE", "sub": "decade", "frame": "小说的故事背景设定在{X}的上海滩。"}
+{"cls": "DATE", "sub": "decade", "frame": "摇滚乐在{X}迎来了爆发。"}
+{"cls": "DATE", "sub": "decade", "frame": "这里在{X}还是一片农田，现在已经高楼林立了。"}
+{"cls": "DATE", "sub": "decade", "frame": "按照专家的说法，这种病最早在{X}就有记载。"}
+{"cls": "DATE", "sub": "decade", "frame": "文艺复兴运动大致从{X}开始，持续了约三百年。"}
+{"cls": "DATE", "sub": "decade", "frame": "你说的那种绿皮火车，{X}坐过的人都有印象。"}
+{"cls": "DATE", "sub": "decade", "frame": "{X}以来，全球气温上升趋势明显。"}
+{"cls": "DATE", "sub": "decade", "frame": "这套邮票是{X}发行的，现在很难找了。"}
+{"cls": "DATE", "sub": "decade", "frame": "他的创作高峰期集中在{X}后期。"}
+{"cls": "DATE", "sub": "decade", "frame": "据统计，{X}出生的人口规模远超后来几代。"}
+{"cls": "DATE", "sub": "decade", "frame": "这款游戏机风靡于{X}，是很多人的童年回忆。"}
+{"cls": "DATE", "sub": "decade", "frame": "研究表明，该地区的城市化进程在{X}明显加速。"}
+{"cls": "DATE", "sub": "decade", "frame": "那时候是{X}，大家下班后都喜欢去舞厅。"}
+{"cls": "DATE", "sub": "decade", "frame": "这座教堂的钟楼是在{X}重建的。"}
+{"cls": "DATE", "sub": "decade", "frame": "从{X}到现在，这条街的样子变了太多。"}
+{"cls": "DATE", "sub": "decade", "frame": "有人把{X}称为“改革的年代”，这话不无道理。"}
+{"cls": "DATE", "sub": "range", "frame": "展览将于{X}在市美术馆展出。"}
+{"cls": "DATE", "sub": "range", "frame": "请假时间：{X}，共计五天。"}
+{"cls": "DATE", "sub": "range", "frame": "本次促销活动时间为{X}，售完即止。"}
+{"cls": "DATE", "sub": "range", "frame": "{X}期间，部分路段实行交通管制。"}
+{"cls": "DATE", "sub": "range", "frame": "我们计划{X}去日本旅游。"}
+{"cls": "DATE", "sub": "range", "frame": "第二次世界大战（{X}）是人类历史上规模最大的战争。"}
+{"cls": "DATE", "sub": "range", "frame": "春运时间为{X}，共四十天。"}
+{"cls": "DATE", "sub": "range", "frame": "报名时间是{X}，逾期系统关闭。"}
+{"cls": "DATE", "sub": "range", "frame": "这位诗人的生卒年为{X}，一生颠沛流离。"}
+{"cls": "DATE", "sub": "range", "frame": "运动会定在{X}，各班尽快上报名单。"}
+{"cls": "DATE", "sub": "range", "frame": "被告人于{X}期间多次实施盗窃行为。"}
+{"cls": "DATE", "sub": "range", "frame": "我{X}出差，有事发消息给我。"}
+{"cls": "DATE", "sub": "range", "frame": "国庆假期安排：{X}放假调休，共八天。"}
+{"cls": "DATE", "sub": "range", "frame": "根据合同，租期为{X}，到期可续租。"}
+{"cls": "DATE", "sub": "range", "frame": "他在{X}担任该校校长，任内建成了新图书馆。"}
+{"cls": "DATE", "sub": "range", "frame": "冬奥会于{X}在北京举行。"}
+{"cls": "DATE", "sub": "range", "frame": "本学期期末考试安排在{X}，具体科目见附表。"}
+{"cls": "DATE", "sub": "range", "frame": "{X}，全市将开展消防安全大检查。"}
+{"cls": "DATE", "sub": "range", "frame": "那段时间是{X}，我几乎每天都在医院陪护。"}
+{"cls": "DATE", "sub": "range", "frame": "唐朝存续于{X}，共二百八十九年。"}
+{"cls": "DATE", "sub": "range", "frame": "课程有效期为{X}，过期不退。"}
+{"cls": "DATE", "sub": "range", "frame": "统计范围：{X}，数据来源为国家统计局。"}
+{"cls": "DATE", "sub": "range", "frame": "酒店我订的是{X}，一共住三晚。"}
+{"cls": "DATE", "sub": "range", "frame": "根据通告，{X}该景区闭园维修。"}
+{"cls": "DATE", "sub": "range", "frame": "研讨会会期{X}，地点在杭州。"}
+{"cls": "DATE", "sub": "range", "frame": "这项调查覆盖了{X}的全部病例。"}
+{"cls": "DATE", "sub": "range", "frame": "她在{X}休了产假，回来就升职了。"}
+{"cls": "DATE", "sub": "range", "frame": "学校的暑假是{X}，比去年长了一周。"}
+{"cls": "DATE", "sub": "range", "frame": "社保缴费基数调整的执行期为{X}。"}
+{"cls": "DATE", "sub": "range", "frame": "网上流传的那组照片拍摄于{X}，并非最近。"}
