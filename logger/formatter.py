@@ -5,7 +5,7 @@ import json
 import logging
 from datetime import datetime
 
-from .extra_tags import make_extra_tags, extra_tags
+from .extra_tags import extra_tags
 
 class JsonFormatter(logging.Formatter):
     """JSON格式化器"""

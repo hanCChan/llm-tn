@@ -21,7 +21,7 @@
     版本1.2.3 是 VERSION 而 型号N8599 是 SERIAL, ¥5000 是 MONEY 而 5箱 是 MEASURE。
     切到小句为止上下文还在, 再往下切成裸 "3:1" 模型只能猜。
 
-不变式(test/test_split.py 拿 4167 条 gold 验证):
+训练和线上切分必须满足:
     1) 无损:     "".join(split_chunks(t)) == t
     2) 不断 span: 每个 gold span 在原文中的区间完整落在某一个片内
 """

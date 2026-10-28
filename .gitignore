@@ -3,6 +3,7 @@ runs/
 
 # 评测与推理输出
 test_output/
+out/
 
 # 合并生成的训练文件（可由 train_data/ 重新生成）
 data/train_all.jsonl
@@ -11,6 +12,7 @@ data/train_all.jsonl
 wetext/tn/fsts/
 
 # Python
+.venv/
 __pycache__/
 *.pyc
 *.pyo
@@ -18,6 +20,7 @@ __pycache__/
 # 其他
 .DS_Store
 *.log
+log/
 
 .claude/
 .vscode/

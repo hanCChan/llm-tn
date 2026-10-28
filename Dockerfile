@@ -34,14 +34,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # vLLM v1 引擎跑在子进程里, fork 会和 CUDA 冲突(server.py 内也设了一次兜底)。
 ENV VLLM_WORKER_MULTIPROC_METHOD=spawn
 
-# 模型 2.3G, 单独一层且放在代码之前, 改代码不会重传权重。
+# model/v2 保留基线, model/a1 是最终单阶段 A1; 单独一层便于复用缓存。
 COPY model $WORKSPACE/model
 
 COPY server.py main.py $WORKSPACE/
 COPY train $WORKSPACE/train
 COPY wetext $WORKSPACE/wetext
 COPY data $WORKSPACE/data
-COPY test $WORKSPACE/test
 COPY logger $WORKSPACE/logger
 
 COPY start.sh $WORKSPACE/

@@ -1,6 +1,6 @@
 """读音: LLM 定类 + wetext 场景 normalizer 按 span 路由读音。
 
-LLM 把句子标成 [(span, "CLASS:ctx")...]。TNReader 按 span 的 CLASS 路由到对应
+LLM 把句子标成 [(span, "CLASS")...]。TNReader 按 span 的 CLASS 路由到对应
 场景 normalizer 逐段读音, 拼接后整句再过一遍默认 Normalizer 兜底。
 
 场景 normalizer(各自 boost 相关规则):
@@ -14,7 +14,7 @@ LLM 把句子标成 [(span, "CLASS:ctx")...]。TNReader 按 span 的 CLASS 路�
 用法:
     from train.tn_fst import TNReader
     r = TNReader()
-    r.apply("会议3月5日下午2点开", [["3月5日", "DATE:date"], ["下午2点", "TIME:time"]])
+    r.apply("会议3月5日下午2点开", [["3月5日", "DATE"], ["下午2点", "TIME"]])
 """
 import os
 import re
@@ -63,7 +63,11 @@ class TNReader:
         self.serial = NormalizerSerial(cache_dir=fsts / "serial", full_to_half=False)
 
     def _normalizer_for(self, label):
-        """标签 "CLASS:ctx" -> 场景 normalizer, 无对应场景则返回 None(走默认)。"""
+        """把 ``CLASS`` 或旧格式 ``CLASS:ctx`` 路由到场景 normalizer。
+
+        冒号后内容属于 v2 基线留下的人工上下文，不影响类别本身；最终模型
+        已不再生成该后缀。未知类别返回 None，由调用方的默认 normalizer 兜底。
+        """
         cls = label.split(":", 1)[0].strip().upper()
         attr = _ROUTE.get(cls)
         return getattr(self, attr) if attr else None
@@ -174,13 +178,13 @@ if __name__ == "__main__":
     r = TNReader()
     samples = [
         ("会议3月5日下午2点在中山路88号3栋502室召开，预算¥5000，联系电话400-820-8820。",
-         [["3月5日", "DATE:date"], ["下午2点", "TIME:time"], ["88号3栋502室", "ADDRESS:address"],
-          ["¥5000", "MONEY:money"], ["400-820-8820", "PHONE:phone"]]),
+         [["3月5日", "DATE"], ["下午2点", "TIME"], ["88号3栋502室", "ADDRESS"],
+          ["¥5000", "MONEY"], ["400-820-8820", "PHONE"]]),
         ("这场比分3:1，胜率75%，用的是型号N8599、版本1.2.3的设备。",
-         [["3:1", "SCORE:score"], ["75%", "PERCENT:percent"], ["N8599", "SERIAL:serial"],
-          ["1.2.3", "VERSION:version"]]),
+         [["3:1", "SCORE"], ["75%", "PERCENT"], ["N8599", "SERIAL"],
+          ["1.2.3", "VERSION"]]),
         ("仓库还有5箱货，计算3x60=180千米，活动10月1日~10月7日。",
-         [["5箱", "MEASURE:measure"], ["3x60=180千米", "MATH:math"], ["10月1日~10月7日", "DATE:date"]]),
+         [["5箱", "MEASURE"], ["3x60=180千米", "MATH"], ["10月1日~10月7日", "DATE"]]),
     ]
     for s, edits in samples:
         print("IN  :", s)
