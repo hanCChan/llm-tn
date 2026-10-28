@@ -1,0 +1,1 @@
+{"labels": ["O", "B-DATE", "I-DATE", "B-TIME", "I-TIME", "B-MONEY", "I-MONEY", "B-MEASURE", "I-MEASURE", "B-FRACTION", "I-FRACTION", "B-MATH", "I-MATH", "B-SCORE", "I-SCORE", "B-PERCENT", "I-PERCENT", "B-PHONE", "I-PHONE", "B-SERIAL", "I-SERIAL", "B-VERSION", "I-VERSION", "B-ADDRESS", "I-ADDRESS"], "echo": true, "max_chars": 254}

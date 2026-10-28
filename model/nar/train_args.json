@@ -1,0 +1,28 @@
+{
+ "data": [
+  "data/train_merged.jsonl:2",
+  "data_synth/output/synth_form_coverage_round2_2800.jsonl",
+  "data_synth/output/synth_context_contrast_round3_1367.jsonl",
+  "data_synth/output/synth_chunked_from_human_and_form_1400.jsonl"
+ ],
+ "init": "model/v2",
+ "out": "runs/nar_best",
+ "epochs": 1.0,
+ "lr": 3e-05,
+ "head_lr_mult": 10.0,
+ "global_batch": 32,
+ "wd": 0.01,
+ "beta2": 0.98,
+ "max_chars": 254,
+ "seed": 42,
+ "world": 2,
+ "steps": 435,
+ "n_encoded": 13901,
+ "n_skipped": 0,
+ "data_sha256_16": {
+  "data/train_merged.jsonl:2": "715ebf1dc28e6605",
+  "data_synth/output/synth_form_coverage_round2_2800.jsonl": "a353c5aed4d57358",
+  "data_synth/output/synth_context_contrast_round3_1367.jsonl": "9dd997aff3d095a8",
+  "data_synth/output/synth_chunked_from_human_and_form_1400.jsonl": "b896121caf312a7d"
+ }
+}

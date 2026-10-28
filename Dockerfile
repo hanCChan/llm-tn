@@ -34,10 +34,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # vLLM v1 引擎跑在子进程里, fork 会和 CUDA 冲突(server.py 内也设了一次兜底)。
 ENV VLLM_WORKER_MULTIPROC_METHOD=spawn
 
-# 模型 2.3G, 单独一层且放在代码之前, 改代码不会重传权重。
+# model/v2 为基线, model/nar 为最终 NAR 权重; 单独一层便于复用缓存。
 COPY model $WORKSPACE/model
 
-COPY server.py main.py $WORKSPACE/
+COPY server_nar.py server.py main.py $WORKSPACE/
 COPY train $WORKSPACE/train
 COPY wetext $WORKSPACE/wetext
 COPY data $WORKSPACE/data
@@ -47,7 +47,7 @@ COPY logger $WORKSPACE/logger
 COPY start.sh $WORKSPACE/
 RUN chmod +x $WORKSPACE/start.sh
 
-# 部署机型 L20(Ada, SM89): start.sh 里 DTYPE 默认 bfloat16。
+# 部署机型 L20(Ada, SM89): 默认 NAR + FSTPool 16 + bfloat16。
 #   docker run -d --gpus all -p 8000:8000 --name tn llm-tn
 #   docker run -d --gpus all -p 8000:8000 -e DTYPE=float16 llm-tn   # 落到 T4 时
 #   docker run -it --gpus all --entrypoint bash llm-tn              # 进容器排查

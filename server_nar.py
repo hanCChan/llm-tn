@@ -23,7 +23,7 @@ from train.nar import MAX_CHARS, CharTokenizer, _CLS_LABEL, decode_offsets, echo
 from train.split import has_digit, split_chunks
 from train.vllm_nar import register_vllm_nar
 
-DEFAULT_MODEL = "runs/nar_best"
+DEFAULT_MODEL = "model/nar"
 MAX_CHUNKS = 8
 
 # vLLM's engine core is a spawned process. Registering at import time makes the
@@ -34,6 +34,7 @@ _state = {
     "engine": None,
     "ctok": None,
     "fst": None,
+    "params": None,
     "error": None,
 }
 

@@ -348,7 +348,7 @@ def load_mix(specs):
         if m and not os.path.exists(spec):
             path, rep = m.group(1), int(m.group(2))
         with open(path, encoding="utf-8") as f:
-            rows = [json.loads(l) for l in f if l.strip()]
+            rows = [json.loads(line) for line in f if line.strip()]
         recs += rows * rep
         print(f"[data] {path} ×{rep}: {len(rows)}", flush=True)
     return recs

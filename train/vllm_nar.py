@@ -14,7 +14,7 @@ from torch import nn
 from vllm.config import VllmConfig
 from vllm.distributed import get_pp_group
 from vllm.model_executor.models.qwen3 import Qwen3ForCausalLM
-from vllm.model_executor.models.utils import WeightsMapper, maybe_prefix
+from vllm.model_executor.models.utils import WeightsMapper
 from vllm.model_executor.layers.pooler import AllPool, DispatchPooler, Pooler
 from vllm.sequence import IntermediateTensors
 
