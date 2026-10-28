@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: wetext/runtime/test/CMakeLists.txt
+# 职责: CMake 构建入口
+# 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+# =============================================================================
+
 enable_testing()
 link_libraries(gtest_main gmock)
 include(GoogleTest)

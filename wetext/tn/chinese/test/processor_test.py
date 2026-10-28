@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: wetext/tn/chinese/test/processor_test.py
+# 职责: 定义 CountingProcessor, AmbiguousProcessor, RawAmbiguousProcessor 等组件
+# 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+# =============================================================================
+
 import json
 import os
 import time

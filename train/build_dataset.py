@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: train/build_dataset.py
+# 职责: 构造 A1 专用类别 token 训练序列
+# 核心原理: 围绕类别 token 协议完成数据构造、训练、FST 读音或线上调度，保持训练与推理口径一致。
+# =============================================================================
+
 """构造 A1 专用类别 token 训练序列。
 
 最终 A1 训练序列
@@ -97,9 +104,15 @@ class Collator:
     """
 
     def __init__(self, pad_id: int = EOS_ID):
+        """保存 padding token；A1 默认复用 EOS id，避免额外新增词表项。"""
         self.pad_id = pad_id
 
     def __call__(self, batch):
+        """把变长样本右 padding 成 batch 张量。
+
+        原理: attention mask 只对真实 token 置 1；labels 的 padding 用 -100
+        让交叉熵忽略，边界权重 padding 用 0，从而不会改变归一化后的损失。
+        """
         import torch
 
         max_length = max(len(item["input_ids"]) for item in batch)

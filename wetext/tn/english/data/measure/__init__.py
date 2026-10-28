@@ -11,3 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# =============================================================================
+# llm-tn source header
+# Path: wetext/tn/english/data/measure/__init__.py
+# 职责: 包入口：wetext/tn/english/data/measure
+# 核心原理: 文本规整（TN）：用 pynini 构造 tagger 与 verbalizer FST，将书面形式转成可读文本。
+# =============================================================================

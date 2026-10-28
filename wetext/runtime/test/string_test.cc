@@ -12,6 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// =============================================================================
+// llm-tn source header
+// Path: wetext/runtime/test/string_test.cc
+// 职责: OpenFST C++ 运行时源码
+// 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+// =============================================================================
+
 #include "gmock/gmock.h"
 
 #include "utils/wetext_string.h"

@@ -11,6 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# =============================================================================
+# llm-tn source header
+# Path: wetext/itn/utils.py
+# 职责: Utilities owned by the inverse text normalization package.
+# 核心原理: 逆文本规整（ITN）：把口语形式通过 tagger/verbalizer FST 转回书面或结构化形式。
+# =============================================================================
+
 """Utilities owned by the inverse text normalization package."""
 
 from pathlib import Path

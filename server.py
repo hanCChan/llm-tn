@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: server.py
+# 职责: llm-tn 最终方案服务: 单阶段 A1 + N-gram S3 + FSTPipePool
+# 核心原理: 串联 LaTeX 改写、切片、LLM 定类和 FST 读音；模型只定类，规则负责最终读法。
+# =============================================================================
+
 """llm-tn 最终方案服务: 单阶段 A1 + N-gram S3 + FSTPipePool。
 
     python server.py                          # 0.0.0.0:8000
@@ -49,7 +56,9 @@ from train.labels import parse_edits
 from train.latex import delatex
 from train.split import has_digit, split_chunks
 
+# 默认部署模型；A1 是 llm-tn 最终单阶段类别 token 模型。
 MODEL = "model/a1"
+# 类别 token 协议每个 span 只需一个输出 token；128 为异常长输出保留余量。
 MAX_NEW_TOKENS = 128
 # 单次请求最多送 8 个含数字的片进模型; 超出的片原样返回, 不标注也不读音。
 # 给 GPU 一个每请求硬上限, 长文本不会把 batch 占死。
@@ -336,6 +345,12 @@ async def normalize(body: NormalizeIn):
 
 
 def main():
+    """解析服务参数，写入 FastAPI state，并启动 vLLM/uvicorn 服务。
+
+    原理: vLLM 子进程必须用 spawn 启动，否则会和主进程已初始化的 CUDA
+    上下文冲突；业务日志统一走结构化 logger，uvicorn 只保留 warning 以上
+    输出，避免容器 stdout 与业务日志重复。
+    """
     import uvicorn
 
     ap = argparse.ArgumentParser(description="llm-tn FastAPI + vLLM 服务")

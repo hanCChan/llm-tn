@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: wetext/tn/english/test/nbest_test.py
+# 职责: 实现 nbest_test 模块
+# 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+# =============================================================================
+
 from tn.english.rules.cardinal import Cardinal
 from tn.english.rules.decimal import Decimal
 from tn.english.rules.range import Range

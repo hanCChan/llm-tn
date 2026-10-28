@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: train/sft.py
+# 职责: 单阶段 A1 专用类别 Token 训练入口
+# 核心原理: 围绕类别 token 协议完成数据构造、训练、FST 读音或线上调度，保持训练与推理口径一致。
+# =============================================================================
+
 """单阶段 A1 专用类别 Token 训练入口。
 
 最终方案直接从 ``model/v2`` 初始化，一次完成类别 Token 和边界学习：
@@ -37,6 +44,12 @@ class BoundaryTrainer(Trainer):
     """
 
     def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
+        """计算带 token 权重的因果语言模型交叉熵。
+
+        原理: 标准 CLM 的 logits 与 labels 错一个位置；这里先同步错位权重，
+        再对每个有效 token 计算 CE，最后按权重和归一化。类别 token 及其前面
+        两个边界 token 权重更高，可抑制类别 token 过早生成造成的尾部字符错位。
+        """
         inputs = dict(inputs)
         loss_weights = inputs.pop("loss_weights", None)
         outputs = model(**inputs)
@@ -75,6 +88,12 @@ def freeze_except_label_tokens(model, label_ids):
     label_ids_cpu = torch.tensor(sorted(label_ids), dtype=torch.long)
 
     def mask_embedding_grad(grad):
+        """backward hook：只保留 12 个类别 token 对应行的梯度。
+
+        原理: 冻结参数后，冻结 embedding 仍可能因 tied LM head 参与前向而
+        产生全词表梯度；乘法 mask 把旧词表行严格清零，确保优化器每步只更新
+        类别 token 行。
+        """
         index = label_ids_cpu.to(grad.device)
         mask = torch.zeros_like(grad)
         mask[index] = 1
@@ -84,6 +103,19 @@ def freeze_except_label_tokens(model, label_ids):
 
 
 def main():
+    """执行单阶段 A1 类别 token 训练并保存最终模型。
+
+    关键参数:
+        ``--data``: 一个或多个 JSONL，内容为 ``src`` 与 ``edits``。
+        ``--epochs/--max-steps``: 完整训练轮数或等步数对照实验。
+        ``--lr``: 仅训练新增 token 行时使用较高学习率。
+        ``--global-batch/--per-device``: 用于反推梯度累积步数。
+        ``--boundary-weight``: 类别 token 和 span 尾部 token 的 CE 权重。
+
+    核心原理: 从 ``model/v2`` 初始化后扩展 12 个 special token，冻结底座，
+    只用 tied embedding/LM-head 的新行学习类别边界；验证集按 eval loss
+    早停并回载最佳权重，最终产物同时保存 tokenizer 与模型。
+    """
     parser = argparse.ArgumentParser(description="A1 label-token head training")
     parser.add_argument("--data", nargs="+", required=True,
                         help="one or more replay/augmentation JSONL files")

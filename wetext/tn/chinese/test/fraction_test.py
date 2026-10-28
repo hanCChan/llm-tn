@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# =============================================================================
+# llm-tn source header
+# Path: wetext/tn/chinese/test/fraction_test.py
+# 职责: 定义 TestFraction
+# 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+# =============================================================================
+
 import pytest
 
 from tn.chinese.rules.fraction import Fraction

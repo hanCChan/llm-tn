@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: main.py
+# 职责: A1 中文文本规整命令行入口
+# 核心原理: 串联 LaTeX 改写、切片、LLM 定类和 FST 读音；模型只定类，规则负责最终读法。
+# =============================================================================
+
 """A1 中文文本规整命令行入口。
 
 相对原始 v2
@@ -20,6 +27,7 @@ from train.latex import delatex
 from train.tn_fst import TNReader
 
 
+# 默认部署模型；A1 已包含 12 个类别 token 和对应 embedding 行。
 MODEL = "model/a1"
 
 
@@ -27,6 +35,12 @@ class TN:
     """加载 A1 模型和 FST，并复用它们处理多条文本。"""
 
     def __init__(self, model=MODEL, max_new_tokens=128):
+        """加载 tokenizer、类别 token、因果语言模型和 FST 读音器。
+
+        原理: A1 的类别信息编码在 12 个 special token 中，因此 tokenizer 与
+        embedding 必须先对齐词汇表；模型固定使用 float32 做确定性 greedy
+        推理，FST 则负责把模型给出的类别边界进一步映射为中文读音。
+        """
         self.max_new_tokens = max_new_tokens
         self.tok = AutoTokenizer.from_pretrained(model, fix_mistral_regex=True)
         add_label_tokens(self.tok)
@@ -65,7 +79,12 @@ class TN:
 
 
 def main():
-    """从命令行或 stdin 读取文本，打印 A1 标注与最终读音。"""
+    """从命令行或 stdin 读取文本，打印 A1 标注与最终读音。
+
+    原理: 每条输入都经过 ``delatex -> tag -> TNReader.apply``。``tag`` 只负责
+    判定 span 类别，``TNReader`` 再按类别选择场景 FST，因此模型不需要记忆
+    具体读法，规则更新也不会要求重新训练。
+    """
     args = sys.argv[1:]
     if args == ["-"]:
         source_texts = [line.strip() for line in sys.stdin if line.strip()]

@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# =============================================================================
+# llm-tn source header
+# Path: wetext/itn/main.py
+# 职责: 实现 main 模块
+# 核心原理: 逆文本规整（ITN）：把口语形式通过 tagger/verbalizer FST 转回书面或结构化形式。
+# =============================================================================
+
 from tn.cli import run
 
 

@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# =============================================================================
+# llm-tn source header
+# Path: wetext/itn/english/rules/ordinal.py
+# 职责: 定义 Ordinal
+# 核心原理: 逆文本规整（ITN）：把口语形式通过 tagger/verbalizer FST 转回书面或结构化形式。
+# =============================================================================
+
 import pynini
 from pynini import closure, cross, string_file
 from pynini.lib.pynutil import insert

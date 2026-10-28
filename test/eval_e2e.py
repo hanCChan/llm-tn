@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: test/eval_e2e.py
+# 职责: 端到端评估: Tag 准确率 + 绝对文本(口语)正确率
+# 核心原理: 遵循仓库现有的 A1 类别 token 与 pynini FST 管线，注释仅解释实现，不改变运行行为。
+# =============================================================================
+
 """端到端评估: Tag 准确率 + 绝对文本(口语)正确率。
 
     python test/eval_e2e.py                              # 默认跑两个测试集
@@ -38,6 +45,7 @@ DEFAULT_DATA = [
 
 
 def prf(tp, fp, fn):
+    """由 TP/FP/FN 计算 precision、recall 和 F1；分母为零时返回 0。"""
     p = tp / (tp + fp) if tp + fp else 0.0
     r = tp / (tp + fn) if tp + fn else 0.0
     f1 = 2 * p * r / (p + r) if p + r else 0.0
@@ -99,6 +107,7 @@ def eval_file(tn, path, dump=None):
 
 
 def report(st):
+    """把一个数据集的统计字典格式化为 Tag 与绝对文本指标。"""
     n = st["n"]
     P, R, F = prf(st["tp"], st["fp"], st["fn"])
     print(f"\n数据集: {st['path']}   样本: {n}")
@@ -120,6 +129,11 @@ def report(st):
 
 
 def main():
+    """解析评估参数，逐数据集运行真实 TN 管线并输出汇总指标。
+
+    原理: ``TN.tag`` 单独评估类别边界，随后把预测 edits 交给 ``TNReader``
+    与人工 ``gold_spoken`` 做逐字比较，从而分别暴露定类错误和读音错误。
+    """
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="model/v2")
     ap.add_argument("--data", nargs="*", default=DEFAULT_DATA,

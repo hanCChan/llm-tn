@@ -14,6 +14,13 @@
 @rem limitations under the License.
 @rem
 
+@rem =========================================================================
+@rem llm-tn source header
+@rem Path: wetext/runtime/android/gradlew.bat
+@rem 职责: 实现 gradlew 模块
+@rem 核心原理: 遵循仓库现有的 A1 类别 token 与 pynini FST 管线，注释仅解释实现，不改变运行行为。
+@rem =========================================================================
+
 @if "%DEBUG%" == "" @echo off
 @rem ##########################################################################
 @rem

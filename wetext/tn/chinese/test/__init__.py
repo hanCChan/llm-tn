@@ -11,3 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# =============================================================================
+# llm-tn source header
+# Path: wetext/tn/chinese/test/__init__.py
+# 职责: 包入口：wetext/tn/chinese/test
+# 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+# =============================================================================

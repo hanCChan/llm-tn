@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: test/test_split.py
+# 职责: 切分器不变式验证: 拿 data/train_merged.jsonl 的真实 gold 标注跑
+# 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+# =============================================================================
+
 """切分器不变式验证: 拿 data/train_merged.jsonl 的真实 gold 标注跑。
 
     python test/test_split.py
@@ -44,6 +51,11 @@ def _bounds(chunks):
 
 
 def check(src, edits, fails):
+    """验证切分无损且每个 gold span 完整落在单一分片内。
+
+    失败信息写入 ``fails`` 并返回分片；检查只读输入，便于在大规模拼接样本
+    上重复调用。
+    """
     chunks = split_chunks(src)
 
     if "".join(chunks) != src:
@@ -59,6 +71,7 @@ def check(src, edits, fails):
 
 
 def main():
+    """在真实训练样本和随机拼接段落上验证切分器不变式。"""
     rows = [json.loads(line) for line in open(DATA, encoding="utf-8")]
     print(f"样本 {len(rows)} 条")
 

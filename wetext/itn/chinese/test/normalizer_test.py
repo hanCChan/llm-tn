@@ -12,6 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# =============================================================================
+# llm-tn source header
+# Path: wetext/itn/chinese/test/normalizer_test.py
+# 职责: 定义 TestNormalizer, TestNormalizerDisablestandalonenumberEnable0to9,
+# TestNormalizerEnablestandalonenumberDisable0to9 等组件
+# 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+# =============================================================================
+
 from itertools import chain
 
 import pytest

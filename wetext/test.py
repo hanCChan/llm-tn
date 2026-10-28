@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: wetext/test.py
+# 职责: 实现 test 模块
+# 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+# =============================================================================
+
 from pynini.lib import rewrite
 from tn.chinese.rules.range import Range
 from tn.chinese.rules_custom.date_cn import DateCN

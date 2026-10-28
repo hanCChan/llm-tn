@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: train/fst_pool.py
+# 职责: 面向线上服务的 FST 有界多进程池
+# 核心原理: 围绕类别 token 协议完成数据构造、训练、FST 读音或线上调度，保持训练与推理口径一致。
+# =============================================================================
+
 """面向线上服务的 FST 有界多进程池。
 
 wetext/pynini 的 normalizer 不适合多线程并发：全局锁会把 FST 排队到事件循环
@@ -184,6 +191,7 @@ class _Worker:
                  "job", "count", "alive", "exitcode")
 
     def __init__(self, index, process, conn, cpu, ready):
+        """保存 worker 身份、通信 fd、绑核结果和初始就绪 future。"""
         self.index = index
         self.process = process
         self.conn = conn
@@ -204,6 +212,7 @@ class _Job:
                  "dispatched_at", "worker")
 
     def __init__(self, job_id, chunk, edits, future, enqueued_at):
+        """记录任务内容、调用方 future 以及排队和派发时间戳。"""
         self.job_id = job_id
         self.chunk = chunk
         self.edits = edits
@@ -218,6 +227,12 @@ class FSTPipePool:
 
     def __init__(self, workers=8, sched="lifo", cpus=None, max_queue=4096,
                  queue_timeout=30.0):
+        """配置进程数、调度策略、CPU 亲和性、队列上限和总超时。
+
+        原理: 池本身不创建线程；所有 worker 的 pipe fd 由 asyncio reader
+        回调驱动。有界队列和总超时把过载转换成可观测的 503，而不是让请求
+        在事件循环里无限等待。
+        """
         if sched not in ("lifo", "fifo"):
             raise ValueError(f"unknown FST scheduler: {sched}")
         self.workers = max(1, int(workers))

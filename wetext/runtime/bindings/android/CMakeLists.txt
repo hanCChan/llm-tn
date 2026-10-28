@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: wetext/runtime/bindings/android/CMakeLists.txt
+# 职责: CMake 构建入口
+# 核心原理: 遵循仓库现有的 A1 类别 token 与 pynini FST 管线，注释仅解释实现，不改变运行行为。
+# =============================================================================
+
 # Android JNI binding. Included by the top-level runtime/CMakeLists.txt only when
 # configuring with the NDK toolchain (if(ANDROID)). It reuses the parent's
 # openfst/glog/gflags and the wetext_processor/wetext_utils targets, so it just

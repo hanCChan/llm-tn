@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: train/latex.py
+# 职责: LaTeX -> math 规则认得的写法: 正则把 LaTeX 记法改写成等价的 unicode 算式
+# 核心原理: 围绕类别 token 协议完成数据构造、训练、FST 读音或线上调度，保持训练与推理口径一致。
+# =============================================================================
+
 """LaTeX -> math 规则认得的写法: 正则把 LaTeX 记法改写成等价的 unicode 算式。
 
 只做"记法改写", 不管读音 —— 改写后的文本走原有管线(LLM 定类 -> TNReader 读音),
@@ -33,6 +40,11 @@ _HAS_LATEX = re.compile(r"\\(?:[a-zA-Z]{2,}|[(\[])|\$\$|\$[^$\n]{1,200}\$|[\^_]\
 
 
 def _load(name):
+    """读取制表符分隔的 LaTeX 映射表，返回两列组成的字典。
+
+    原理: 只接受包含 TAB 的行，注释或损坏行会被自然跳过；映射表在模块
+    导入时一次加载，后续匹配不再访问磁盘。
+    """
     with open(os.path.join(_DATA, name), encoding="utf-8") as f:
         return dict(line.rstrip("\n").split("\t", 1) for line in f if "\t" in line)
 
@@ -117,6 +129,12 @@ def has_latex(text):
 
 
 def _unwrap(src):
+    """反复应用 LaTeX 改写规则，直到文本达到稳定状态。
+
+    原理: 嵌套命令必须由内向外展开，所以每轮只处理不含内层花括号的规则；
+    定点迭代让 ``\\frac{\\frac{1}{2}}{3}`` 逐层化简。上限 16 轮用于阻止
+    异常输入导致无限改写，最后再执行未知命令清理和花括号剥离。
+    """
     text = src
     for _ in range(16):                                 # 定点迭代; 上限防病态输入
         before = text
@@ -135,6 +153,11 @@ def delatex(text):
         return text
 
     def one(m):
+        """校验一个数学定界符候选，并在确属公式时执行内部改写。
+
+        ``$`` 也常用于货币，不能仅凭成对出现就剥掉。这里要求内容同时满足
+        字符白名单 ``_FORMULA`` 和数学特征 ``_MATHY``，否则原样保留。
+        """
         body = next(g for g in m.groups() if g is not None)
         # 不像公式就整段原样留着(连定界符) —— 大概率是货币或路径, 不是数学。
         return (_unwrap(body) if _FORMULA.match(body) and _MATHY.search(body)

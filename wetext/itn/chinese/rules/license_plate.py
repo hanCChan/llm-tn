@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# =============================================================================
+# llm-tn source header
+# Path: wetext/itn/chinese/rules/license_plate.py
+# 职责: 定义 LicensePlate
+# 核心原理: 逆文本规整（ITN）：把口语形式通过 tagger/verbalizer FST 转回书面或结构化形式。
+# =============================================================================
+
 from pynini import string_file
 from tn.processor import Processor
 from itn.utils import get_abs_path

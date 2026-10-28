@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# =============================================================================
+# llm-tn source header
+# Path: wetext/tn/chinese/rules_custom/date_cn.py
+# 职责: 定义 DateCN
+# 核心原理: 文本规整（TN）：用 pynini 构造 tagger 与 verbalizer FST，将书面形式转成可读文本。
+# =============================================================================
+
 from pynini import accep, string_file, cross
 from pynini.lib.pynutil import delete, insert
 

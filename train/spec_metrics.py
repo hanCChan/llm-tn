@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: train/spec_metrics.py
+# 职责: vLLM N-gram 推测解码与引擎阶段指标采集
+# 核心原理: 围绕类别 token 协议完成数据构造、训练、FST 读音或线上调度，保持训练与推理口径一致。
+# =============================================================================
+
 """vLLM N-gram 推测解码与引擎阶段指标采集。
 
 vLLM 0.11 的 ``SchedulerStats.spec_decoding_stats`` 是实际调度步产生的
@@ -19,11 +26,17 @@ class SpecMetricsLogger(StatLoggerBase):
     _stats = None
 
     def __init__(self, vllm_config, engine_index=0):
+        """保存 vLLM 配置与引擎编号；累计状态由类级锁统一保护。"""
         self.vllm_config = vllm_config
         self.engine_index = engine_index
 
     @classmethod
     def reset(cls):
+        """清空并重建所有累计字段。
+
+        原理: 推测解码指标按调度步和完成请求分别累计；时间指标使用
+        count/sum/min/max 累加器，避免保存每个样本造成内存随运行时长增长。
+        """
         with cls._lock:
             cls._stats = {
                 "scheduler_observations": 0,
@@ -53,10 +66,12 @@ class SpecMetricsLogger(StatLoggerBase):
 
     @staticmethod
     def _new_accumulator():
+        """创建一个可增量更新、查询时再计算 mean 的时间统计桶。"""
         return {"count": 0, "sum": 0.0, "min": None, "max": None}
 
     @classmethod
     def _observe(cls, accumulator, value):
+        """把单个浮点观测合并进统计桶，同时更新计数、总和与极值。"""
         value = float(value)
         accumulator["count"] += 1
         accumulator["sum"] += value
@@ -71,6 +86,7 @@ class SpecMetricsLogger(StatLoggerBase):
 
     @classmethod
     def _finalize_accumulator(cls, accumulator):
+        """复制统计桶并补算平均值，保留原始累计值不变。"""
         result = dict(accumulator)
         result["mean"] = (
             result["sum"] / result["count"] if result["count"] else None)
@@ -78,6 +94,12 @@ class SpecMetricsLogger(StatLoggerBase):
 
     @classmethod
     def record(cls, scheduler_stats, iteration_stats, engine_idx=0):
+        """累计 vLLM 一个调度步的推测解码与请求阶段指标。
+
+        原理: ``SchedulerStats`` 提供 Draft/Accepted token 数，
+        ``IterationStats`` 提供 TTFT、ITL、排队/预填充/解码耗时和完成原因。
+        两类数据在同一把可重入锁内合并，保证 ``/debug/spec`` 读到一致快照。
+        """
         with cls._lock:
             if cls._stats is None:
                 cls.reset()
@@ -134,6 +156,11 @@ class SpecMetricsLogger(StatLoggerBase):
 
     @classmethod
     def snapshot(cls):
+        """返回当前指标深拷贝，并补算接受率、平均接受长度和均值。
+
+        原理: 累计字段只在 ``record`` 中更新；派生指标在快照阶段计算，既
+        避免重复累加，也避免调用方修改返回值影响后续统计。
+        """
         with cls._lock:
             if cls._stats is None:
                 return None
@@ -170,15 +197,22 @@ class SpecMetricsLogger(StatLoggerBase):
         return stats
 
     def log_engine_initialized(self):
+        """满足 ``StatLoggerBase`` 接口；本模块无需响应引擎初始化事件。"""
         pass
 
     def log(self):
+        """满足 ``StatLoggerBase`` 接口；指标由 ``record`` 主动累计。"""
         pass
 
 
 def build_ngram_config(mode: str, num_tokens: int,
                        lookup_min: int, lookup_max: int):
-    """构造 vLLM 0.11 N-gram speculative_config。"""
+    """构造 vLLM 0.11 N-gram 推测解码配置。
+
+    原理: N-gram 方法从已有 prompt/生成 token 中查找匹配窗口，先草拟后续
+    ``num_tokens`` 个 token，再由主模型并行验证；``lookup_min/max`` 控制
+    匹配窗口长度。``mode=off`` 时返回 None，保持非推测路径不变。
+    """
     if mode == "off":
         return None
     if mode != "ngram":

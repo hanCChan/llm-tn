@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: test_latex.py
+# 职责: latex 改写单测: 跑 latex => 改写后 用例表(不跑 LLM, 不跑 FST, 不依赖 pytest)
+# 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+# =============================================================================
+
 """latex 改写单测: 跑 latex => 改写后 用例表(不跑 LLM, 不跑 FST, 不依赖 pytest)。
 
     python test_latex.py        # 只打印失败的用例
@@ -22,6 +29,11 @@ from train.latex import delatex                       # noqa: E402
 
 
 def main():
+    """逐条执行 LaTeX 改写用例并返回进程退出码。
+
+    原理: 只比较 ``delatex`` 的确定性文本结果，不加载模型或读音 FST，因此
+    该测试可快速隔离公式记法替换错误。
+    """
     verbose = "-v" in sys.argv[1:]
 
     cases = list(parse_test_case("data/latex.txt"))

@@ -12,6 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// =============================================================================
+// llm-tn source header
+// Path: wetext/runtime/bin/processor_main.cc
+// 职责: OpenFST C++ 运行时源码
+// 核心原理: 用 OpenFST 组合输入、tagger 和 verbalizer，把文本转换表示为有限状态转换。
+// =============================================================================
+
 #include <fstream>
 #include <iostream>
 #include <string>

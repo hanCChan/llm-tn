@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: test_math.py
+# 职责: math 规则读音单测: 跑 written => spoken 用例表(不跑 LLM, 不依赖 pytest)
+# 核心原理: 用固定样例或真实数据做回归验证，隔离并暴露规则、边界或协议回归。
+# =============================================================================
+
 """math 规则读音单测: 跑 written => spoken 用例表(不跑 LLM, 不依赖 pytest)。
 
     python test_math.py        # 只打印失败的用例
@@ -18,6 +25,11 @@ from tn.chinese.test.utils import parse_test_case     # noqa: E402
 
 
 def main():
+    """逐条执行 math 规则读音用例并返回进程退出码。
+
+    原理: 直接调用 ``Math().normalize``，验证 FST 规则能否把算式转成中文；
+    无匹配路径时统一记为 ``<NO PATH>``，便于与期望值区分。
+    """
     verbose = "-v" in sys.argv[1:]
     math = Math()
 

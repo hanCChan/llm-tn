@@ -1,3 +1,10 @@
+# =============================================================================
+# llm-tn source header
+# Path: train/tn_fst.py
+# 职责: 读音: LLM 定类 + wetext 场景 normalizer 按 span 路由读音
+# 核心原理: 围绕类别 token 协议完成数据构造、训练、FST 读音或线上调度，保持训练与推理口径一致。
+# =============================================================================
+
 """读音: LLM 定类 + wetext 场景 normalizer 按 span 路由读音。
 
 LLM 把句子标成 [(span, "CLASS")...]。TNReader 按 span 的 CLASS 路由到对应
@@ -52,6 +59,12 @@ _ROUTE = {
 
 class TNReader:
     def __init__(self):
+        """初始化默认读音器以及五类场景读音器。
+
+        原理: 每个场景只组合与该类别相关的 FST 规则，类别路由可以收窄
+        tagger 的候选空间；独立 cache 子目录避免多个 normalizer 编译时
+        共用目录产生锁冲突。
+        """
         # full_to_half=False 保留全/半角标点, 便于逐字对齐 gold_spoken。
         # 每个场景 normalizer 用独立 cache 子目录, 避免共享 cache_dir 时的 FST 撞车。
         fsts = files("tn") / "fsts"
