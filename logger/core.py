@@ -7,14 +7,40 @@
 # 核心原理: 输出可检索的结构化 JSON 日志，并通过白名单字段控制记录内容。
 # =============================================================================
 
-"""日志核心模块。
+"""按白名单输出结构化 JSON 的服务日志核心。
 
-写死默认值：INFO 级别，JSON 格式，滚动写入 `log/app.log`，仅文件输出。
-目录名与 Dockerfile / start.sh 里创建的 `$WORKSPACE/log` 保持一致。
+总体怎么做
+==========
+1. ``setup_logger`` 创建 ``app`` logger 和 100MB 滚动文件 handler。
+2. ``JsonFormatter`` 把固定字段和 requestid/sdkappid 白名单编码成单行 JSON。
+3. 默认同步模式直接写文件；``enable_async`` 可把 handler 移到 QueueListener。
+4. 异步模式下业务线程只执行 ``QueueHandler.put``，JSON 格式化和磁盘 I/O
+   在后台线程完成。
+5. ``stop_async`` 先 drain 队列，再恢复同步 handler，保证退出日志落盘。
 
-线上服务可调用 :func:`enable_async` 把 JSON 序列化和文件写盘移到后台线程，
-避免每次请求日志阻塞 asyncio 事件循环。停止时 QueueListener 会先 drain 队列，
-随后恢复原始文件 handler，保证退出日志仍能落盘。
+核心函数
+========
+* ``setup_logger``: 幂等创建 logger 和滚动文件 handler。
+* ``get_logger``: 返回根 logger 或 ``app.<name>`` 子 logger。
+* ``enable_async``: 切换到 QueueHandler + QueueListener。
+* ``stop_async``: 排空异步队列并恢复同步 handler。
+
+函数如何协作
+============
+``get_logger`` -> ``setup_logger`` 创建 handler；``enable_async`` 把 handler
+移到 listener 线程；业务日志经 ``QueueHandler`` 入队；``stop_async`` 排空队列
+并恢复原 handler。格式化和字段白名单由 ``JsonFormatter`` 完成。
+
+关键参数
+========
+* ``_LOG_FILE``: 相对工作目录的日志路径，默认 ``log/app.log``。
+* ``_LOG_LEVEL``: 固定 INFO 级。
+* ``_LOG_MAX_MB/_LOG_BACKUP``: 单文件 100MB，保留 5 份。
+* ``get_logger(name)``: 非空时返回 ``app.<name>``，仍向 app logger 传播。
+
+注意:
+    异步队列是无界的；极端磁盘阻塞时可能增加内存。进程被 SIGKILL 时，
+    尚未 drain 的队列记录无法保证落盘。
 """
 
 import logging
@@ -38,7 +64,14 @@ _async_handlers = None
 
 
 def setup_logger() -> logging.Logger:
-    """初始化并返回 ``app`` logger；重复调用不会重复添加 handler。"""
+    """初始化并返回 ``app`` logger。
+
+    返回:
+        配置了 JSON 滚动文件 handler 的 ``app`` logger；重复调用直接复用。
+
+    副作用:
+        创建日志目录并清空 ``app`` logger 上已有的 handler。
+    """
     global _logger, _configured
     if _configured and _logger is not None:
         return _logger
@@ -65,7 +98,11 @@ def setup_logger() -> logging.Logger:
 
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
-    """返回根 logger 或带 ``app.`` 前缀的命名 logger。"""
+    """返回根 logger 或命名 logger。
+
+    参数:
+        name: 为空返回 ``app``；否则返回 ``app.<name>``，并向上传播到根 logger。
+    """
     root = setup_logger()
     if name is None:
         return root
@@ -77,6 +114,8 @@ def enable_async() -> None:
 
     原始文件 handler 从 logger 移到 QueueListener，业务线程只负责把 LogRecord
     放入无锁队列。原 handler 暂存在模块级变量，供 :func:`stop_async` 恢复。
+
+    该切换只改变日志 I/O 执行位置，不改变日志级别、格式或白名单字段。
     """
     import queue
     from logging.handlers import QueueHandler, QueueListener
@@ -95,7 +134,11 @@ def enable_async() -> None:
 
 
 def stop_async() -> None:
-    """停止异步 listener、排空日志队列，并恢复同步文件 handler。"""
+    """停止异步 listener、排空日志队列，并恢复同步文件 handler。
+
+    必须在服务退出阶段调用；队列 drain 完成后，生命周期末尾的“已退出”
+    日志仍会通过恢复后的文件 handler 落盘。
+    """
     global _listener, _async_handlers
     if _listener is None:
         return

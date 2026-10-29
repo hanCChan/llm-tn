@@ -1,24 +1,37 @@
 # =============================================================================
 # llm-tn source header
 # Path: test/bench_server.py
-# 职责: 压测 server.py 的 /normalize: 各并发下的吞吐/延迟, 并输出端到端准确率
-# 核心原理: 遵循仓库现有的 A1 类别 token 与 pynini FST 管线，注释仅解释实现，不改变运行行为。
+# 职责: 压测 /normalize 的吞吐/延迟并核对端到端质量
+# 核心原理: aiohttp 固定并发发请求，统一 CLASS 后计算 Tag F1 和 spoken 准确率。
 # =============================================================================
 
-"""压测 server.py 的 /normalize: 各并发下的吞吐/延迟, 并输出端到端准确率。
+"""对 TN 服务执行固定并发 HTTP 压测并核对端到端质量。
 
-    python test/bench_server.py                     # 两个默认数据集, 并发 1/8/32
-    python test/bench_server.py -c 1 16 64
-    python test/bench_server.py --url http://10.0.0.5:8000 --data data/test_data/hard_num.jsonl
+总体怎么做
+==========
+1. 读取带 ``src/edits/gold_spoken`` 的 373 条评测数据。
+2. 用 aiohttp 连接池按 c1/c8/c32... 固定并发请求 ``/normalize``。
+3. 记录每请求延迟、吞吐、Tag micro-F1 和 spoken 逐字准确率。
+4. 对比各并发档位的 edits+spoken，检查 continuous batching 是否改变输出。
 
-必须用 asyncio 客户端压, 不能用 urllib+ThreadPoolExecutor: 后者是同步阻塞
-IO, 几十个线程争 GIL, 客户端自己先成瓶颈, 会把服务端的 continuous batching 效果
-完全掩盖掉(实测同一服务, 线程版并发 32 只有 3 句/s, asyncio 版 46.7 句/s)。
-默认使用 aiohttp；httpx 在高并发下会增加明显的客户端排队，只保留作对照。
+核心函数
+========
+* ``run_round_aiohttp``: 并发请求、延迟采样和响应收集。
+* ``accuracy``: 统一 CLASS 后计算 span 集合 micro-F1 和文本正确数。
+* ``main_async``: 建连接池、预热、逐档位执行并输出结果。
 
-准确率与 test/eval_e2e.py 同义(Tag micro-F1 + 口语文本逐字匹配), 差别是这里走 HTTP
-打真实服务。每个并发档位都算一次: greedy 解码下各档位应当完全一致, 若不一致说明合批
-影响了输出, 需要在上线前查清。
+函数如何协作
+============
+``main_async`` -> ``run_round_aiohttp`` -> 服务 ``/normalize`` -> ``accuracy``
+-> 检查跨并发输出漂移。httpx 仅保留作客户端对照。
+
+关键参数
+========
+* ``--url``: 服务地址。
+* ``--data``: 一个或多个评测 JSONL。
+* ``--concurrency/-c``: 固定并发档位。
+* ``--client``: ``aiohttp`` 默认；``httpx`` 用于对照。
+* ``--timeout``: 单 HTTP 请求超时秒数。
 """
 import argparse
 import asyncio
@@ -39,7 +52,11 @@ DEFAULT_DATA = [
 
 
 def load(paths):
-    """读取并拼接多个 JSONL 压测数据，忽略空行。"""
+    """读取并拼接多个 JSONL。
+
+    参数:
+        paths: JSONL 路径列表，支持相对仓库根目录的路径。
+    """
     recs = []
     for path in paths:
         recs += [json.loads(l) for l in open(path, encoding="utf-8") if l.strip()]
@@ -49,7 +66,17 @@ def load(paths):
 
 
 async def run_round(client, url, recs, conc):
-    """固定并发跑完 recs, 返回 (总耗时, 每请求延迟, 每条响应)。"""
+    """用 httpx 固定并发跑完一批请求。
+
+    参数:
+        client: 共享 ``httpx.AsyncClient``。
+        url: 服务基地址。
+        recs: 包含 ``src`` 的评测记录。
+        conc: 同时在途的最大请求数。
+
+    返回:
+        ``(墙钟秒数, 每请求延迟秒数, 每请求响应 JSON)``。
+    """
     sem = asyncio.Semaphore(conc)
     latency = [0.0] * len(recs)
     results = [None] * len(recs)
@@ -69,7 +96,17 @@ async def run_round(client, url, recs, conc):
 
 
 async def run_round_aiohttp(session, url, recs, conc):
-    """固定并发跑完 recs，aiohttp 客户端版本。"""
+    """用 aiohttp 固定并发跑完一批请求。
+
+    参数:
+        session: 共享 ClientSession。
+        url: 服务基地址。
+        recs: 包含 ``src`` 的评测记录。
+        conc: 同时在途的最大请求数。
+
+    返回:
+        ``(墙钟秒数, 每请求延迟秒数, 每请求响应 JSON)``。
+    """
     sem = asyncio.Semaphore(conc)
     latency = [0.0] * len(recs)
     results = [None] * len(recs)
@@ -89,7 +126,17 @@ async def run_round_aiohttp(session, url, recs, conc):
 
 
 def accuracy(recs, results):
-    """Tag micro-F1 + 口语文本逐字正确数。口径与 test/eval_e2e.py 一致。"""
+    """计算 Tag micro-F1 和 spoken 逐字正确数。
+
+    参数:
+        recs: gold 记录。
+        results: 与 recs 顺序一致的 HTTP 响应。
+
+    gold 的 ``CLASS:ctx`` 与预测 ``CLASS`` 只比较冒号前的语义类别。
+
+    返回:
+        ``(Tag micro-F1, precision, recall, spoken 正确数)``。
+    """
     tp = fp = fn = 0
     txt_ok = 0
     for rec, res in zip(recs, results):
@@ -109,7 +156,15 @@ def accuracy(recs, results):
 
 
 def pct(values, q):
-    """返回延迟列表的 q 分位数；空列表返回 0。"""
+    """返回延迟列表的百分位。
+
+    参数:
+        values: 逐请求延迟秒数。
+        q: 百分位整数，例如 p95 传 95。
+
+    返回:
+        按最近秩规则选取的延迟值；输入为空时抛出 ``IndexError``。
+    """
     ordered = sorted(values)
     return ordered[min(len(ordered) - 1, int(len(ordered) * q / 100))]
 
@@ -120,6 +175,9 @@ async def main_async(args):
     原理: 每轮固定并发发送全部样本，用完成数除以墙钟时间得到吞吐；全部
     请求完成后统一计算 Tag F1 和 ``gold_spoken`` 逐字准确率。预热轮先触发
     CUDA graph 与 FST 缓存，避免一次性初始化污染首个档位。
+
+    参数:
+        args: argparse 结果，提供 url/data/concurrency/client/timeout。
     """
     recs = load(args.data)
     max_conc = max(args.concurrency)
@@ -178,7 +236,13 @@ async def main_async(args):
 
 
 def main():
-    """解析压测命令参数并启动 asyncio 主流程。"""
+    """解析压测参数并启动 asyncio 主流程。
+
+    关键参数:
+        ``--client``: aiohttp 默认，避免 httpx 高并发客户端排队。
+        ``--concurrency``: 逐档固定并发，不做开放到达压测。
+        ``--data``: 必须含 gold edits 和 gold_spoken。
+    """
     ap = argparse.ArgumentParser(description="压测 TN 服务的 /normalize")
     ap.add_argument("--url", default="http://localhost:8000", help="服务地址")
     ap.add_argument("--data", nargs="+", default=DEFAULT_DATA,

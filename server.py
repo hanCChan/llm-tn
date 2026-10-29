@@ -5,36 +5,43 @@
 # 核心原理: 串联 LaTeX 改写、切片、LLM 定类和 FST 读音；模型只定类，规则负责最终读法。
 # =============================================================================
 
-"""llm-tn 最终方案服务: 单阶段 A1 + N-gram S3 + FSTPipePool。
+"""llm-tn 最终服务: A1 定类 + N-gram 推测解码 + 非阻塞 FST 进程池。
 
-    python server.py                          # 0.0.0.0:8000
-    python server.py --host 127.0.0.1 --port 9000 --model model/a1
+总体怎么做
+==========
+1. HTTP 请求进入 ``normalize``，先做 LaTeX 改写和无损标点切片。
+2. 只把含数字/算式/罗马数字的 chunk 送入 vLLM AsyncLLM 定类。
+3. A1 模型输出 ``span<|TN_CLASS|>`` token；服务从 token_ids 解析类别边界。
+4. 类别 span 交给 ``FSTPipePool``，由独立进程执行 TNReader 两遍读音。
+5. 读音片段按原顺序拼回；业务日志写 ``log/app.log``，响应回传 requestid。
 
-    curl -s localhost:8000/normalize -H 'Content-Type: application/json' \
-         -d '{"text": "会议3月5日下午2点，客服电话400-820-8820", "requestid": "abc123", "sdkappid": 1400000001}'
+核心函数
+========
+* ``lifespan``: 并行初始化 vLLM 和 FSTPool，管理退出顺序。
+* ``_tag``: 单 chunk 的 greedy 定类，兼容 A1 special-token 输出。
+* ``normalize``: 完整请求管线，串起改写、切片、定类、读音和日志。
+* ``health/debug_*``: 就绪、FST 队列和 N-gram 指标探针。
+* ``main``: 命令行参数、应用状态和 uvicorn 启动。
 
-请求可带 requestid(不带则服务端生成), 响应回传同一个值; 日志以它为结构化字段,
-按 requestid 就能捞出一路请求的全部日志。另可带 sdkappid, 同样进日志字段,
-用来按业务方聚合。日志走 logger 包写 log/app.log,
-不打 stdout —— start.sh 里 stdout 是丢弃的。
+函数如何协作
+============
+``normalize`` -> ``delatex/split_chunks`` -> ``_tag``(AsyncLLM.generate)
+-> ``parse_label_token_ids`` -> ``FSTPipePool.apply`` -> 拼接 spoken
+-> 结构化日志 -> HTTP 响应。vLLM 和 FST 都不在事件循环里做阻塞计算。
 
-管线与 main.py 一致, 只是把 LLM 标注换成 vLLM AsyncLLM:
-    LLM 标注(vLLM, GPU) -> FST Pipe Pool 两遍读音(pynini, CPU 多进程)
+关键参数
+========
+* ``model``: 默认 ``model/a1``，必须包含 12 个类别 special token。
+* ``max_new``: 单 chunk 生成 token 上限，防止异常输出无限增长。
+* ``fst_workers``: FST 进程数；每个进程持有一个 TNReader。
+* ``fst_max_queue/fst_timeout``: FST 过载保护和单请求总时限。
+* ``spec_mode/spec_k/spec_min/spec_max``: N-gram 推测解码开关与查找范围。
+* ``log_mode``: ``async`` 将文件写盘移到后台 listener 线程。
 
-最终推理链:
+请求示例::
 
-* ``model/a1`` 从 model/v2 单阶段训练，输出 ``span<|TN_CLASS|>``；
-* server 从 tokenizer added vocab 识别 A1，并解析 ``output.token_ids``；
-* vLLM 使用 N-gram S3(k=4, lookup 1-4) 推测解码；
-* 类别 Span 交给 FSTPipePool(4 workers) 做读音。
-
-为什么用 AsyncLLM 而不是 LLM:
-    AsyncLLM 支持 continuous batching —— 并发请求会被自动合批, 这是 vLLM 对
-    0.6B 小模型最大的价值来源(单句延迟主要是 kernel launch 开销, 靠 CUDA graph
-    削减; 吞吐靠合批)。同步 LLM 类会串行处理, 白扔这部分收益。
-
-单请求时 FST 只有几毫秒，但全局锁会在并发 32 时形成明显的排队尾部；
-因此 FST 使用独立进程池，每个 worker 持有自己的 TNReader。
+    curl -s localhost:8000/normalize -H 'Content-Type: application/json' \\
+         -d '{"text":"会议3月5日下午2点","requestid":"abc123"}'
 """
 import argparse
 import asyncio
@@ -81,6 +88,14 @@ async def lifespan(app):
 
     启动失败不让 uvicorn 直接退出；错误写入 ``_state``，健康检查和业务请求
     会把具体原因以 503 返回。这样容器探针和日志都能看到失败原因。
+
+    参数:
+        app: FastAPI 应用；配置从 ``app.state`` 读取。
+
+    启动顺序:
+        异步日志 -> FSTPool 后台 start -> tokenizer/A1 探测 -> vLLM AsyncLLM。
+    关闭顺序:
+        vLLM -> FSTPool -> 最后一条日志 -> 排空异步日志 listener。
     """
     # 启动失败的 traceback 必须进文件: start.sh 把 stdout 丢了 /dev/null。
     tags = make_extra_tags("startup")
@@ -222,8 +237,19 @@ def _fst_ready():
 
 
 async def _tag(text, request_id, tags):
-    """vLLM greedy 标注。用 token ids 而非字符串喂入, 与 main.py 的
-    add_special_tokens=False 保持一致, 避免 vLLM 自行加特殊 token。"""
+    """执行单个文本 chunk 的 greedy 定类。
+
+    参数:
+        text: 已经过无损切片的一个 chunk。
+        request_id: vLLM 请求 ID，必须全局唯一。
+        tags: 日志白名单字段，用于截断告警。
+
+    返回:
+        ``[[span, CLASS], ...]``。
+
+    使用 token ids 而不是字符串喂入，避免 vLLM 自动添加特殊 token；A1 输出
+    必须从 ``output.token_ids`` 解析 special token 边界。
+    """
     from vllm import SamplingParams, TokensPrompt
 
     prompt_ids = _state["tok"](TN_PREFIX + text + SEP, add_special_tokens=False).input_ids
@@ -276,7 +302,19 @@ async def debug_spec():
 
 @app.post("/normalize", response_model=NormalizeOut)
 async def normalize(body: NormalizeIn):
-    """执行 LaTeX 改写、切片、LLM 定类、FST 读音和结构化日志记录。"""
+    """执行一条完整 TN 请求。
+
+    参数:
+        body.text: 原始待规整文本。
+        body.requestid: 可选链路 ID；缺省时自动生成。
+        body.sdkappid: 可选业务方 ID，仅进入结构化日志。
+
+    返回:
+        ``NormalizeOut``，包含原文、spoken、edits 和 requestid。
+
+    所有 FST 计算都不在事件循环；``await FSTPipePool.apply`` 等待的是异步
+    future，而不是 pipe 阻塞读取。
+    """
     # 客户端不带 requestid 时服务端补一个, 保证每条日志都能定位到一路请求。
     requestid = body.requestid or uuid.uuid4().hex
     tags = make_extra_tags(requestid, str(body.sdkappid))
@@ -350,6 +388,14 @@ def main():
     原理: vLLM 子进程必须用 spawn 启动，否则会和主进程已初始化的 CUDA
     上下文冲突；业务日志统一走结构化 logger，uvicorn 只保留 warning 以上
     输出，避免容器 stdout 与业务日志重复。
+
+    关键参数:
+        host/port: HTTP 监听地址。
+        model/dtype/max_model_len: 模型和推理上下文配置。
+        max_new: 单 chunk 生成上限。
+        fst_workers/cpus/max_queue/timeout: FST 进程池配置。
+        spec_mode/spec_k/min/max: N-gram 推测解码配置。
+        log_mode: full 同步写盘，async 后台 listener 写盘。
     """
     import uvicorn
 

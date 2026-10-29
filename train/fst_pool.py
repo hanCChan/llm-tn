@@ -1,22 +1,42 @@
 # =============================================================================
 # llm-tn source header
 # Path: train/fst_pool.py
-# 职责: 面向线上服务的 FST 有界多进程池
-# 核心原理: 围绕类别 token 协议完成数据构造、训练、FST 读音或线上调度，保持训练与推理口径一致。
+# 职责: 面向线上服务的非阻塞 FST 有界多进程池
+# 核心原理: 主进程通过非阻塞 pipe fd 调度，worker 进程独立持有 TNReader 执行 FST。
 # =============================================================================
 
-"""面向线上服务的 FST 有界多进程池。
+"""面向线上服务的非阻塞 FST 有界多进程池。
 
-wetext/pynini 的 normalizer 不适合多线程并发：全局锁会把 FST 排队到事件循环
-之外，高并发时形成明显尾延迟。本模块让每个 spawn worker 持有独立的 ``TNReader``，
-通过全双工 pipe 收发任务，并由 asyncio 事件循环直接监听可读 fd，不额外占用线程。
+总体怎么做
+==========
+1. 每个 spawn worker 独立持有 ``TNReader``，避开 pynini 的线程安全和全局锁问题。
+2. 主进程把 pipe 设为非阻塞，通过 ``add_reader/add_writer`` 驱动 ``os.read/os.write``。
+3. worker 进程内仍使用阻塞读写，但它在独立进程中，不占用服务事件循环。
+4. 每个 HTTP 请求的 chunk 进入有界队列，由空闲 worker 按策略领取并执行读音。
+5. 任务通过长度前缀帧传输；部分读写保留在每 worker 自己的缓冲区中。
 
-核心约束：
+核心函数
+========
+* ``start``: spawn worker、设置非阻塞 fd、等待 TNReader 就绪。
+* ``apply``: 请求级 FST 入口，负责排队、超时、结果重组。
+* ``_submit/_send/_flush_write``: 创建任务并把长度前缀帧写入 pipe。
+* ``_on_readable/_handle_message``: 增量读帧、反序列化、完成 future。
+* ``close``: 停止 worker、回收进程、失败残留任务。
 
-* 队列有界，超过 ``max_queue`` 时快速失败，避免请求无限堆积；
-* 单个请求有总超时，超时后取消尚未完成的 future；
-* worker 异常只返回任务错误，不让整个进程池静默退出；
-* ``stats()`` 暴露队列、worker 和延迟拆解，供 ``/debug/fst`` 和压测使用。
+函数如何协作
+============
+``apply`` -> ``_submit`` -> ``_send`` -> 非阻塞 ``os.write`` -> worker 进程执行
+``TNReader.apply`` -> worker 写回帧 -> ``_on_readable`` -> ``_handle_message``
+-> future 唤醒 -> ``apply`` 返回读音。事件循环从不调用阻塞式
+``recv_bytes/send_bytes``。
+
+关键参数
+========
+* ``workers``: FST 进程数，每个 worker 独立初始化一个 TNReader。
+* ``max_queue``: 等待队列上限，超限抛 ``FSTOverloaded``。
+* ``queue_timeout``: 单请求等待 FST 读音完成的总时限。
+* ``cpus``: CPU 亲和性；``auto`` 会尽量分散到不同物理核心。
+* ``sched``: 空闲 worker 领取顺序，``lifo`` 优先复用刚完成任务的 worker。
 """
 
 import asyncio
@@ -26,6 +46,7 @@ import multiprocessing as mp
 import os
 import pickle
 import signal
+import struct
 import sys
 import time
 
@@ -34,6 +55,7 @@ from train.tn_fst import TNReader
 # FST 首次启动可能需要编译规则；生产镜像已带缓存，仍给冷启动留足时间。
 START_TIMEOUT = 300.0
 _perf = time.perf_counter
+_FRAME = struct.Struct("!I")
 
 
 class FSTOverloaded(RuntimeError):
@@ -46,6 +68,33 @@ class FSTTimeout(RuntimeError):
     """单次请求等待 FST 总时长超过配置上限。"""
 
     pass
+
+
+def _read_exact(fd, size):
+    """Read exactly ``size`` bytes from a blocking worker-side fd."""
+    chunks = bytearray()
+    while len(chunks) < size:
+        chunk = os.read(fd, size - len(chunks))
+        if not chunk:
+            raise EOFError
+        chunks.extend(chunk)
+    return bytes(chunks)
+
+
+def _send_frame_blocking(fd, message):
+    """Worker-side length-prefixed frame write."""
+    payload = pickle.dumps(message)
+    data = memoryview(_FRAME.pack(len(payload)) + payload)
+    while data:
+        written = os.write(fd, data)
+        data = data[written:]
+
+
+def _recv_frame_blocking(fd):
+    """Worker-side length-prefixed frame read."""
+    header = _read_exact(fd, _FRAME.size)
+    size, = _FRAME.unpack(header)
+    return pickle.loads(_read_exact(fd, size))
 
 
 @contextlib.contextmanager
@@ -163,15 +212,16 @@ def _worker_main(conn, cpu):
     if cpu is not None:
         with contextlib.suppress(OSError):
             os.sched_setaffinity(0, {cpu})
+    fd = conn.fileno()
     reader = TNReader()
-    conn.send_bytes(pickle.dumps(("ready", os.getpid(), sorted(os.sched_getaffinity(0)))))
+    _send_frame_blocking(
+        fd, ("ready", os.getpid(), sorted(os.sched_getaffinity(0))))
     while True:
         try:
-            payload = conn.recv_bytes()
+            message = _recv_frame_blocking(fd)
         except (EOFError, OSError):
             return
         t_recv = _perf()
-        message = pickle.loads(payload)
         if message is None:
             return
         job_id, chunk, edits = message
@@ -181,14 +231,15 @@ def _worker_main(conn, cpu):
         except Exception as exc:  # noqa: BLE001 - report the work error without killing worker
             output = None
             error = f"{type(exc).__name__}: {exc}"
-        conn.send_bytes(pickle.dumps((job_id, output, error, t_recv, _perf())))
+        _send_frame_blocking(fd, (job_id, output, error, t_recv, _perf()))
 
 
 class _Worker:
     """主进程侧的 worker 句柄，集中保存进程、fd、忙碌任务和健康状态。"""
 
     __slots__ = ("index", "process", "conn", "fd", "cpu", "pid", "ready",
-                 "job", "count", "alive", "exitcode")
+                 "job", "count", "alive", "exitcode", "read_buf", "write_buf",
+                 "writing")
 
     def __init__(self, index, process, conn, cpu, ready):
         """保存 worker 身份、通信 fd、绑核结果和初始就绪 future。"""
@@ -203,6 +254,9 @@ class _Worker:
         self.count = 0
         self.alive = True
         self.exitcode = None
+        self.read_buf = bytearray()
+        self.write_buf = bytearray()
+        self.writing = False
 
 
 class _Job:
@@ -223,15 +277,23 @@ class _Job:
 
 
 class FSTPipePool:
-    """有界 FST 进程池，供单个 asyncio 事件循环使用。"""
+    """有界、非阻塞 pipe 驱动的 FST 进程池。
+
+    事件循环线程负责排队、非阻塞 pipe I/O、消息解帧和 future 完成；worker
+    进程负责持有 TNReader 并串行执行 FST。这样 pynini 计算和 pipe 等待都不会
+    阻塞 asyncio。
+    """
 
     def __init__(self, workers=8, sched="lifo", cpus=None, max_queue=4096,
                  queue_timeout=30.0):
-        """配置进程数、调度策略、CPU 亲和性、队列上限和总超时。
+        """保存池配置并初始化等待队列和 worker 状态。
 
-        原理: 池本身不创建线程；所有 worker 的 pipe fd 由 asyncio reader
-        回调驱动。有界队列和总超时把过载转换成可观测的 503，而不是让请求
-        在事件循环里无限等待。
+        参数:
+            workers: FST worker 进程数，至少为 1。
+            sched: ``lifo``/``fifo``，决定空闲 worker 复用顺序。
+            cpus: ``auto``、显式 CPU 列表或空值。
+            max_queue: 待派发任务上限，用于过载保护。
+            queue_timeout: 单请求 FST 总超时，包含排队与执行。
         """
         if sched not in ("lifo", "fifo"):
             raise ValueError(f"unknown FST scheduler: {sched}")
@@ -251,7 +313,11 @@ class FSTPipePool:
         self.jobs = 0
 
     async def start(self):
-        """spawn 全部 worker，并等待每个 worker 完成 TNReader 初始化。"""
+        """spawn worker、设置非阻塞 fd，并等待所有 TNReader 初始化。
+
+        启动阶段同步执行 ``process.start()`` 和 CPU topology 探测；它们不在在线
+        请求路径上。worker 就绪前，所有 pipe fd 已注册到事件循环。
+        """
         self.loop = asyncio.get_running_loop()
         context = mp.get_context("spawn")
         cpus = resolve_cpus(self.cpus, self.workers)
@@ -266,6 +332,9 @@ class FSTPipePool:
                 )
                 process.start()
                 child.close()
+                # The event loop owns parent-side pipe I/O. Non-blocking fd makes
+                # partial writes/reads observable through add_reader/add_writer.
+                os.set_blocking(parent.fileno(), False)
                 worker = _Worker(
                     index, process, parent, cpus[index], self.loop.create_future())
                 self.processes.append(worker)
@@ -281,7 +350,11 @@ class FSTPipePool:
         self.idle.extend(self.processes)
 
     def close(self):
-        """优雅通知 worker 退出；超时则 terminate，最后失败所有未完成任务。"""
+        """停止并回收 worker；超时 terminate，最后失败所有剩余任务。
+
+        该函数只用于服务退出或启动失败清理。为了尽快结束，终止帧和 ``join``
+        允许同步等待，但不会发生在正常 HTTP 请求期间。
+        """
         if self._closed:
             return
         self._closed = True
@@ -290,7 +363,10 @@ class FSTPipePool:
                 with contextlib.suppress(Exception):
                     self.loop.remove_reader(worker.fd)
                 with contextlib.suppress(Exception):
-                    worker.conn.send_bytes(pickle.dumps(None))
+                    self.loop.remove_writer(worker.fd)
+                with contextlib.suppress(Exception):
+                    os.set_blocking(worker.fd, True)
+                    _send_frame_blocking(worker.fd, None)
         for worker in self.processes:
             worker.process.join(timeout=2)
             if worker.process.is_alive():
@@ -302,10 +378,20 @@ class FSTPipePool:
         self._fail_all(RuntimeError("FST pool closed"))
 
     async def apply(self, chunks, edits_map):
-        """处理一个请求中需要读音的 chunk。
+        """执行一个 HTTP 请求所需的全部 FST 读音任务。
 
-        ``chunks`` 是完整分片列表，``edits_map`` 只包含需要过 FST 的下标。
-        返回值保持原顺序：命中的下标替换为读音结果，其余 chunk 原样保留。
+        参数:
+            chunks: 无损切片后的完整文本片列表，顺序必须与原文拼接一致。
+            edits_map: ``{chunk_index: edits}``，只包含需要进入 FST 的下标。
+
+        返回:
+            ``(spoken_chunks, timing)``。结果保持原 chunk 顺序，timing 包含
+            总 FST 耗时以及最慢任务的 queue/IPC/worker 拆分。
+
+        异常:
+            FSTOverloaded: 等待队列超过 ``max_queue``。
+            FSTTimeout: 单请求等待超过 ``queue_timeout``。
+            RuntimeError: worker 不可用或 worker 执行失败。
         """
         if self._closed or not any(worker.alive for worker in self.processes):
             raise RuntimeError("FST pool unavailable")
@@ -354,7 +440,13 @@ class FSTPipePool:
         return spoken, timing
 
     def _submit(self, chunk, edits, enqueued_at):
-        """创建任务 future，并立即调度到空闲 worker 或放入待处理队列。"""
+        """为单个 chunk 创建任务并尝试立即派发。
+
+        参数:
+            chunk: 待读音原文片。
+            edits: 该片内的 ``[span, CLASS]`` 标注。
+            enqueued_at: 请求级开始时间，用于统计 queue_ms。
+        """
         self._job_id += 1
         job = _Job(
             self._job_id,
@@ -378,14 +470,58 @@ class FSTPipePool:
         return self.idle.pop() if self.sched == "lifo" else self.idle.popleft()
 
     def _send(self, worker, job):
-        """序列化任务并写入 duplex pipe；写失败时标记 worker 死亡。"""
+        """把任务编码为长度前缀帧并写入非阻塞 pipe。
+
+        参数:
+            worker: 已领取任务的 worker。
+            job: 包含 chunk、edits、future 和时间戳的任务对象。
+
+        ``pickle.dumps`` 只处理小对象；可能阻塞的 pipe 写由非阻塞
+        ``os.write`` 完成，未写部分继续由 ``add_writer`` 驱动。
+        """
         job.dispatched_at = _perf()
         job.worker = worker
         worker.job = job
         try:
-            worker.conn.send_bytes(pickle.dumps((job.job_id, job.chunk, job.edits)))
-        except OSError:
-            self._worker_died(worker)
+            payload = pickle.dumps((job.job_id, job.chunk, job.edits))
+            worker.write_buf.extend(_FRAME.pack(len(payload)))
+            worker.write_buf.extend(payload)
+            self._flush_write(worker)
+        except Exception as exc:  # noqa: BLE001 - worker death must be explicit
+            self._worker_died(worker, f"send failed: {exc}")
+
+    def _flush_write(self, worker):
+        """尽量排空 worker 的写缓冲。
+
+        参数:
+            worker: 持有非阻塞 fd 和 ``write_buf`` 的 worker。
+
+        遇到 ``BlockingIOError`` 时保留剩余字节并注册 writer；写空后移除
+        writer，避免事件循环持续空转。
+        """
+        try:
+            while worker.write_buf:
+                written = os.write(worker.fd, worker.write_buf)
+                if written <= 0:
+                    raise BrokenPipeError
+                del worker.write_buf[:written]
+        except BlockingIOError:
+            pass
+        except OSError as exc:
+            self._worker_died(worker, f"write failed: {exc}")
+            return
+        if worker.write_buf and not worker.writing:
+            worker.writing = True
+            self.loop.add_writer(worker.fd, self._on_writable, worker)
+        elif not worker.write_buf and worker.writing:
+            worker.writing = False
+            with contextlib.suppress(Exception):
+                self.loop.remove_writer(worker.fd)
+
+    def _on_writable(self, worker):
+        """pipe 可写回调；只执行非阻塞增量续写。"""
+        if worker.alive:
+            self._flush_write(worker)
 
     def _release(self, worker):
         """worker 完成后优先取等待队列任务，队列为空才标记为空闲。"""
@@ -398,18 +534,51 @@ class FSTPipePool:
         self.idle.append(worker)
 
     def _on_readable(self, worker):
-        """pipe 可读回调：处理 ready 消息或任务结果，然后释放 worker。"""
-        try:
-            payload = worker.conn.recv_bytes()
-        except (EOFError, OSError):
-            self._worker_died(worker)
+        """pipe 可读回调；增量读帧并完成已收齐的消息。
+
+        参数:
+            worker: 触发可读事件的 worker。
+
+        不使用 ``recv_bytes``，因此不会等待完整消息；不完整帧保留在
+        ``read_buf``，等下一次可读事件继续拼接。
+        """
+        if not worker.alive:
             return
-        received = _perf()
         try:
-            message = pickle.loads(payload)
-        except Exception as exc:  # noqa: BLE001
-            self._worker_died(worker, f"invalid worker response: {exc}")
+            chunk = os.read(worker.fd, 65536)
+        except BlockingIOError:
             return
+        except OSError as exc:
+            self._worker_died(worker, f"read failed: {exc}")
+            return
+        if not chunk:
+            self._worker_died(worker, "pipe closed")
+            return
+        worker.read_buf.extend(chunk)
+        while len(worker.read_buf) >= _FRAME.size:
+            size, = _FRAME.unpack(worker.read_buf[: _FRAME.size])
+            total = _FRAME.size + size
+            if len(worker.read_buf) < total:
+                break
+            payload = bytes(worker.read_buf[_FRAME.size:total])
+            del worker.read_buf[:total]
+            try:
+                message = pickle.loads(payload)
+            except Exception as exc:  # noqa: BLE001
+                self._worker_died(worker, f"invalid worker response: {exc}")
+                return
+            self._handle_message(worker, message, _perf())
+
+    def _handle_message(self, worker, message, received):
+        """处理已解码消息、完成 future 并派发下一个排队任务。
+
+        参数:
+            worker: 返回消息的 worker。
+            message: ready 消息或任务响应。
+            received: 主进程完成本次读取的时间戳。
+
+        该函数只做内存状态更新、耗时计算和轻量调度，不执行 FST。
+        """
         if message[0] == "ready":
             _, worker.pid, affinity = message
             if not worker.ready.done():
@@ -432,15 +601,27 @@ class FSTPipePool:
         self._release(worker)
 
     def _worker_died(self, worker, detail=""):
-        """清理死亡 worker，并把启动中或执行中的 future 标记为异常。"""
+        """清理异常 worker，并显式失败其 future。
+
+        参数:
+            worker: 已退出或 pipe 异常的 worker。
+            detail: 追加到异常信息中的诊断原因。
+
+        使用 ``join(0)`` 只回收已退出进程，不在事件循环中等待。
+        """
         if not worker.alive:
             return
         worker.alive = False
         with contextlib.suppress(Exception):
             self.loop.remove_reader(worker.fd)
+        with contextlib.suppress(Exception):
+            self.loop.remove_writer(worker.fd)
+        worker.read_buf.clear()
+        worker.write_buf.clear()
         with contextlib.suppress(ValueError):
             self.idle.remove(worker)
-        worker.process.join(timeout=0.2)
+        # Failure handling runs on the event loop; never wait for process exit here.
+        worker.process.join(timeout=0)
         worker.exitcode = worker.process.exitcode
         error = RuntimeError(
             f"FST worker {worker.index} (pid {worker.pid}) exited, "
@@ -464,7 +645,7 @@ class FSTPipePool:
                     job.future.set_exception(error)
 
     def stats(self):
-        """返回可直接 JSON 序列化的运行状态，供健康检查和压测读取。"""
+        """返回可 JSON 序列化的队列、worker 和累计处理状态。"""
         return {
             "kind": "pipe",
             "requests": self.requests,
