@@ -100,6 +100,12 @@ FST workers=4
 python main.py "报警拨打110来了110人"
 ```
 
+逐阶段查看 LaTeX 改写、切片、模型 prompt/token、解析后的 edits 和 FST 路由：
+
+```bash
+python infer_trace.py "客服电话400-820-8820，会议3月5日下午2点开始，胜率75%。"
+```
+
 HTTP 示例：
 
 ```bash

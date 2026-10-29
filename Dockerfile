@@ -44,7 +44,7 @@ ENV VLLM_WORKER_MULTIPROC_METHOD=spawn
 # model/v2 保留基线, model/a1 是最终单阶段 A1; 单独一层便于复用缓存。
 COPY model $WORKSPACE/model
 
-COPY server.py main.py $WORKSPACE/
+COPY server.py main.py infer_trace.py $WORKSPACE/
 COPY train $WORKSPACE/train
 COPY wetext $WORKSPACE/wetext
 COPY data $WORKSPACE/data
